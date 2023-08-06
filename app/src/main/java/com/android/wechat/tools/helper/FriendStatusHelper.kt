@@ -8,6 +8,7 @@ object FriendStatusHelper {
 
     interface TaskCallBack {
         fun onFriendChecked(wxUserInfo: WxUserInfo)
+        fun onFriendChecked(list: MutableList<WxUserInfo>)
     }
 
     var taskCallBack: TaskCallBack? = null
@@ -25,6 +26,13 @@ object FriendStatusHelper {
         Log.d("检查结果", "$data")
         checkResultList.add(data)
         taskCallBack?.onFriendChecked(data)
+    }
+
+    fun addCheckResults(list: MutableList<WxUserInfo>?) {
+        list ?: return
+        Log.d("检查结果", "$list")
+        checkResultList.addAll(list)
+        taskCallBack?.onFriendChecked(list)
     }
 
     fun getResult() = checkResultList

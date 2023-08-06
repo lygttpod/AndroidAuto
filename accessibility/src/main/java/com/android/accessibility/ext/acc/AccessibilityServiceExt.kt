@@ -170,7 +170,7 @@ fun AccessibilityService.scrollBackward(
 suspend fun AccessibilityService?.findAllChildByScroll(
     parentViewId: String,
     childViewId: String,
-    stopFindBlock: () -> Boolean
+    stopFindBlock: (MutableList<AccessibilityNodeInfo>) -> Boolean
 ): List<AccessibilityNodeInfo> {
     this ?: return listOf()
     val rootNode = rootInActiveWindow
@@ -195,7 +195,7 @@ suspend fun AccessibilityService?.findAllChildByScroll(
                 list.add(node)
             }
         }
-        isStop = stopFindBlock()
+        isStop = stopFindBlock(list)
     }
     return list
 }

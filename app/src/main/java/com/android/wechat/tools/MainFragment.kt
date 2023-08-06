@@ -13,6 +13,7 @@ import com.android.wechat.tools.adapter.FriendInfoAdapter
 import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.databinding.FragmentMainBinding
 import com.android.wechat.tools.em.FriendStatus
+import com.android.wechat.tools.helper.TaskByGroupHelper
 import com.android.wechat.tools.helper.FriendStatusHelper
 import com.android.wechat.tools.helper.TaskHelper
 import com.android.wechat.tools.service.WXAccessibility
@@ -71,6 +72,13 @@ class MainFragment : Fragment() {
                     adapter.addData(wxUserInfo)
                 }
             }
+
+            override fun onFriendChecked(list: MutableList<WxUserInfo>) {
+                if (activity?.isDestroyed == true) return
+                runOnUiThread {
+                    adapter.addDatas(list)
+                }
+            }
         }
     }
 
@@ -94,6 +102,12 @@ class MainFragment : Fragment() {
         binding.buttonCheck.setOnClickListener {
             GlobalScope.launch {
                 TaskHelper.startCheck()
+            }
+        }
+
+        binding.buttonCheckByGroup.setOnClickListener {
+            GlobalScope.launch {
+                TaskByGroupHelper.startCheckByCreateGroup()
             }
         }
     }

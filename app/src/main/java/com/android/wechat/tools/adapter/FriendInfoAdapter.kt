@@ -43,6 +43,12 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
         }
     }
 
+    fun addDatas(list: MutableList<WxUserInfo>) {
+        val startIndex = itemCount
+        this.list.addAll(list)
+        notifyItemRangeInserted(startIndex, itemCount)
+    }
+
     class FriendInfoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemFriendBinding.bind(view)
 

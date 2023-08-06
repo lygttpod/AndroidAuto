@@ -1,10 +1,10 @@
 package com.android.wechat.tools.page
 
-import com.android.accessibility.ext.acc.findById
+import com.android.accessibility.ext.acc.clickById
 import com.android.accessibility.ext.acc.clickByText
+import com.android.accessibility.ext.acc.findById
 import com.android.accessibility.ext.acc.pressBackButton
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
-import com.android.wechat.tools.service.WXAccessibility
 import com.android.wechat.tools.service.wxAccessibilityService
 
 object WXHomePage : IPage {
@@ -30,7 +30,9 @@ object WXHomePage : IPage {
                 true
             } else {
                 delayAction(200) {
-                    if (WXAccessibility.isInWXApp) {
+                    // TODO: 判断不准确，待完善 
+//                    if (WXAccessibility.isInWXApp) {
+                    if (true) {
                         wxAccessibilityService?.pressBackButton()
                     } else {
                         throw RuntimeException("检测到退出微信了，终止自动化程序")
@@ -48,6 +50,32 @@ object WXHomePage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击通讯录tab") {
                 wxAccessibilityService.clickByText("通讯录")
+            }
+        }
+    }
+
+    /**
+     * 点击微信首页右上角的➕按钮
+     */
+    suspend fun clickRightTopPlusBtn(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("点击首页右上角的【＋】按钮") {
+                //android.widget.RelativeLayout → text =  → id = com.tencent.mm:id/grs → description = 更多功能按钮
+                wxAccessibilityService.clickById("com.tencent.mm:id/grs")
+//                wxAccessibilityService?.findById("com.tencent.mm:id/grs")?.click() == true
+            }
+        }
+    }
+
+    /**
+     * 点击发起群聊按钮
+     */
+    suspend fun clickCreateGroupBtn(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("发起群聊") {
+                //android.widget.TextView → text = 发起群聊 → id = com.tencent.mm:id/knx
+                wxAccessibilityService.clickById("com.tencent.mm:id/knx")
+//                wxAccessibilityService?.findById("com.tencent.mm:id/knx")?.click() == true
             }
         }
     }
