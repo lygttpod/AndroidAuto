@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainFragment">
+
+    <Button
+        android:id="@+id/button_open_service"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="打开无障碍服务"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_friend_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1、获取好友列表"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/button_friend_check"
+        app:layout_constraintTop_toBottomOf="@id/button_open_service" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-->"
+        android:textColor="@color/purple_700"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/button_friend_list"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_friend_list" />
+
+    <Button
+        android:id="@+id/button_friend_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2、好友状态检测"
+        app:layout_constraintLeft_toRightOf="@id/button_friend_list"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_friend_list" />
+
+    <Button
+        android:id="@+id/button_check"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="一键检测《获取好友列表后自动开始检测》"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_friend_list" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendRv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_check"
+        tools:itemCount="5"
+        tools:listitem="@layout/item_friend" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
