@@ -9,7 +9,6 @@ import com.android.wechat.tools.em.FriendStatus
 import com.android.wechat.tools.em.toFriendStatus
 import com.android.wechat.tools.page.*
 import com.android.wechat.tools.service.wxAccessibilityService
-import kotlinx.coroutines.delay
 
 object TaskHelper {
 
@@ -17,37 +16,44 @@ object TaskHelper {
         FriendStatusHelper.init()
         App.instance().goToWx()
         App.instance().toast("正在准备检测环境，请稍等")
-        delay(5000)
+        //判断当前是否进入到微信
+        val inWxApp = WXHomePage.waitEnterWxApp()
+        if (!inWxApp) return
         //判断当前是否已经成功打开微信
-        val isHome = WXHomePage.goHome()
+        val isHome = WXHomePage.backToHome()
         if (!isHome) return
         App.instance().toast("开始检测。。。请勿操作屏幕。。。请耐心等待")
         getUserList().forEach { singleTask(it) }
+        if (WXHomePage.backToHome()) {
+            wxAccessibilityService?.pressBackButton()
+        }
         App.instance().toast("检测结束，请回到APP查看好友状态")
-        wxAccessibilityService?.pressBackButton()
     }
 
     suspend fun startCheckFromList(list: List<String>) {
         FriendStatusHelper.clearFriendsStatusList()
         App.instance().goToWx()
         App.instance().toast("正在准备检测环境，请稍等")
-        delay(5000)
+        //判断当前是否进入到微信
+        val inWxApp = WXHomePage.waitEnterWxApp()
+        if (!inWxApp) return
         //判断当前是否已经成功打开微信
-        val isHome = WXHomePage.goHome()
+        val isHome = WXHomePage.backToHome()
         if (!isHome) return
-        //点击底部通讯录Tab
-        // 点两次是为了让列表回到顶部初始状态
-        val clickContactsTab = WXHomePage.clickContactsTab()
+        //点击底部通讯录Tab 点两次是为了让列表回到顶部初始状态
+        val clickContactsTab = WXHomePage.clickContactsTab(true)
         if (!clickContactsTab) return
         App.instance().toast("开始检测。。。请勿操作屏幕。。。请耐心等待")
         list.forEach { singleTask(it) }
+        if (WXHomePage.backToHome()) {
+            wxAccessibilityService?.pressBackButton()
+        }
         App.instance().toast("检测结束，请回到APP查看好友状态")
-        wxAccessibilityService?.pressBackButton()
     }
 
     private suspend fun singleTask(user: String) {
         //回到微信首页
-        val isHome = WXHomePage.goHome()
+        val isHome = WXHomePage.backToHome()
         if (!isHome) return
         //点击底部通讯录Tab
         val clickContactsTab = WXHomePage.clickContactsTab()
@@ -93,28 +99,27 @@ object TaskHelper {
             WXRemittancePage.clickIKnow()
         }
         //回到首页 重复操作
-        WXHomePage.goHome()
+        WXHomePage.backToHome()
     }
 
     suspend fun getUserList(isBack2App: Boolean = false): List<String> {
         FriendStatusHelper.clearFriends()
         App.instance().goToWx()
         App.instance().toast("正在准备检测环境，请稍等")
-        delay(5000)
+        //判断当前是否进入到微信
+        val inWxApp = WXHomePage.waitEnterWxApp()
+        if (!inWxApp) return listOf()
         //回到微信首页
-        val isHome = WXHomePage.goHome()
+        val isHome = WXHomePage.backToHome()
         if (!isHome) return listOf()
-        //点击底部通讯录Tab
-        val clickContactsTab = WXHomePage.clickContactsTab()
+        //点击底部通讯录Tab 点两次是为了让列表回到顶部初始状态
+        val clickContactsTab = WXHomePage.clickContactsTab(true)
         if (!clickContactsTab) return listOf()
-        //点两次是为了让列表回到顶部初始状态
-        WXHomePage.clickContactsTab()
-        delay(1000)
-        val friends = WXContactPage.findAllFriends()
+        val friends = WXContactPage.getAllFriends()
         //点击底部通讯录Tab，回到列表初始状态
         WXHomePage.clickContactsTab()
         FriendStatusHelper.addFriends(friends)
-        if (isBack2App) {
+        if (isBack2App && WXHomePage.backToHome()) {
             wxAccessibilityService?.pressBackButton()
         }
         App.instance().toast("好友列表获取完毕")

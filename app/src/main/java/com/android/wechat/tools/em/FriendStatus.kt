@@ -5,5 +5,5 @@ enum class FriendStatus(val status: String) {
     DELETE("被删除"),
     NORMAL("正常"),
     ACCOUNT_EXCEPTION("帐号异常"),
-    UNKNOW("未知"),
+    UNKNOW("待检测"),
 }

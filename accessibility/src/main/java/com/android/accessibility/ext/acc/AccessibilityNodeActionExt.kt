@@ -6,11 +6,12 @@ import android.view.accessibility.AccessibilityNodeInfo
 /**
  * 点击事件
  */
-fun AccessibilityNodeInfo.click(): Boolean {
+fun AccessibilityNodeInfo?.click(): Boolean {
+    this ?: return false
     return if (isClickable) {
         performAction(AccessibilityNodeInfo.ACTION_CLICK)
     } else {
-        parent.click()
+        parent?.click() == true
     }
 }
 

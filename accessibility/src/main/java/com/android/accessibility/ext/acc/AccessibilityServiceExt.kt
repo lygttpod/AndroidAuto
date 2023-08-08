@@ -59,6 +59,21 @@ suspend fun AccessibilityService?.scrollToClickByText(
     }
 }
 
+suspend fun AccessibilityService?.scrollToFindByText(
+    scrollViewId: String,
+    text: String
+): AccessibilityNodeInfo? {
+    this ?: return null
+    val find = rootInActiveWindow.findNodesByText(text).firstOrNull()
+    return if (find == null) {
+        rootInActiveWindow.findNodesById(scrollViewId).firstOrNull()?.scrollForward()
+        delay(200)
+        scrollToFindByText(scrollViewId, text)
+    } else {
+        find
+    }
+}
+
 fun AccessibilityService.printNodeInfo() {
     rootInActiveWindow.printNodeInfo()
 }
@@ -183,7 +198,7 @@ suspend fun AccessibilityService?.findAllChildByScroll(
         }
     }
 
-    val parentNode = rootNode.findNodeById(parentViewId) ?: return listOf()
+    val parentNode = rootNode.findNodeById(parentViewId) ?: return list
     var isStop = false
     while (parentNode.isScrollable && !isStop) {
         parentNode.scrollForward()
@@ -213,9 +228,83 @@ fun AccessibilityService?.findChildNodes(
     if (size <= 0) return emptyList()
     for (index in 0 until size) {
         parentNode.getChild(index).findNodesById(childViewId).firstOrNull()?.let {
-            Log.d("printNodeInfo", "当前页parentNode所有可见的元素=======${it.text}")
+            Log.d("printNodeInfo", "当前页parentNode可见的元素=======${it.text}")
             findList.add(it)
         }
     }
     return findList
+}
+
+suspend fun AccessibilityService?.selectChildByScroll(
+    parentViewId: String,
+    childViewId: String,
+    maxSelectCount: Int = Int.MAX_VALUE,
+    startText: String? = null,
+    onScrollEnd: (() -> Unit)? = null
+): List<String> {
+    this ?: return listOf()
+    val rootNode = rootInActiveWindow
+    val findTexts = mutableListOf<String>()
+    val findNodes = findChildNodes(parentViewId, childViewId)
+    val startIndex = findNodes.indexOfFirst { it.text.default() == startText }
+    findNodes.filterIndexed { index, info -> index > startIndex }.forEach {
+        val text = it.text.default()
+        if (!findTexts.contains(text)) {
+            if (findTexts.size < maxSelectCount) {
+                val clicked = it.click()
+                if (clicked) {
+                    findTexts.add(text)
+                    Log.d("selectChildByScroll", "click: 点击 $text")
+                }
+                delay(50)
+            } else {
+                return@forEach
+            }
+        }
+    }
+
+    val parentNode = rootNode.findNodeById(parentViewId) ?: return findTexts
+    var lastTemp = findNodes
+    //第一次滚动到底的判断，测试中发现，有一定概率出现滚动到上次选择的最后一个好友正好是当前一屏中的第一个，就会误判为滚动完成
+    var isEnd = false
+    //当第一次判断为滚动结束后，在家滚动一次后二次判断，可以确保真正的滚动到底
+    var isRealEnd = false
+    while (parentNode.isScrollable && findTexts.size < maxSelectCount && !isRealEnd) {
+        parentNode.scrollForward()
+        Log.d("selectChildByScroll", "滚动了一屏")
+        delay(1000)
+        val findNextNodes = findChildNodes(parentViewId, childViewId)
+        val tempEnd = lastTemp.lastOrNull()?.text == findNextNodes.lastOrNull()?.text
+        if (isEnd && tempEnd) {
+            isRealEnd = true
+        }
+        isEnd = tempEnd
+
+        Log.d(
+            "selectChildByScroll",
+            "=============是否搜索到底了  isEnd = $isEnd  isRealEnd = $isRealEnd  lastTemp = ${lastTemp.lastOrNull()?.text}   currentLast = ${findNextNodes.lastOrNull()?.text}"
+        )
+        if (isRealEnd) {
+            onScrollEnd?.invoke()
+            break
+        }
+        lastTemp = findNextNodes
+        if (!isEnd) {
+            findNextNodes.forEach {
+                val text = it.text.default()
+                if (!findTexts.contains(text)) {
+                    if (findTexts.size < maxSelectCount) {
+                        val clicked = it.click()
+                        if (clicked) {
+                            findTexts.add(text)
+                            Log.d("selectChildByScroll", "click: 点击 $text")
+                        }
+                    } else {
+                        return@forEach
+                    }
+                }
+            }
+        }
+    }
+    return findTexts
 }

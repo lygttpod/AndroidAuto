@@ -1,5 +1,5 @@
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowsChanged"
     android:accessibilityFeedbackType="feedbackAllMask"
     android:accessibilityFlags="flagIncludeNotImportantViews|flagReportViewIds|flagRetrieveInteractiveWindows|flagRequestEnhancedWebAccessibility"
     android:canPerformGestures="true"
@@ -7,4 +7,5 @@
     android:canRetrieveWindowContent="true"
     android:description="@string/wx_tools_des"
     android:notificationTimeout="100"
+    android:packageNames="com.tencent.mm"
     android:settingsActivity=".MainActivity" />

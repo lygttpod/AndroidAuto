@@ -16,6 +16,7 @@ import com.android.wechat.tools.em.FriendStatus
 import com.android.wechat.tools.helper.TaskByGroupHelper
 import com.android.wechat.tools.helper.FriendStatusHelper
 import com.android.wechat.tools.helper.TaskHelper
+import com.android.wechat.tools.ktx.formatTime
 import com.android.wechat.tools.service.WXAccessibility
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -79,6 +80,18 @@ class MainFragment : Fragment() {
                     adapter.addDatas(list)
                 }
             }
+
+
+            override fun onTaskStart() {
+
+            }
+
+            override fun onTaskEnd(totalTime: Long) {
+                runOnUiThread {
+                    binding.tvTaskDes.text = "检测总耗时：${totalTime.formatTime()}"
+                }
+            }
+
         }
     }
 
