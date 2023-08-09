@@ -28,7 +28,7 @@ fun AccessibilityNodeInfo.findNodeById(viewId: String): AccessibilityNodeInfo? =
  * 简化findAccessibilityNodeInfosByText(text).firstOrNull()
  */
 fun AccessibilityNodeInfo.findNodeByText(text: String): AccessibilityNodeInfo? =
-    findAccessibilityNodeInfosByText(text).firstOrNull()
+    findAccessibilityNodeInfosByText(text).firstOrNull { it.text.default() == text }
 
 /**
  * 判断是否有viewId这个节点

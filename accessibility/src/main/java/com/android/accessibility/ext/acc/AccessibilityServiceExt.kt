@@ -16,7 +16,7 @@ fun AccessibilityService.findById(id: String): AccessibilityNodeInfo? {
 }
 
 fun AccessibilityService.findByText(text: String): AccessibilityNodeInfo? {
-    return rootInActiveWindow.findNodesByText(text).firstOrNull()
+    return rootInActiveWindow.findNodeByText(text)
 }
 
 fun AccessibilityService.findByContainsText(
@@ -49,7 +49,7 @@ suspend fun AccessibilityService?.scrollToClickByText(
     text: String
 ): Boolean {
     this ?: return false
-    val find = rootInActiveWindow.findNodesByText(text).firstOrNull()
+    val find = rootInActiveWindow.findNodeByText(text)
     return if (find == null) {
         rootInActiveWindow.findNodesById(scrollViewId).firstOrNull()?.scrollForward()
         delay(200)
@@ -59,14 +59,61 @@ suspend fun AccessibilityService?.scrollToClickByText(
     }
 }
 
+suspend fun AccessibilityService?.scrollToFindNextNodeByCurrentText(
+    scrollViewId: String,
+    childViewId: String,
+    lastText: String?,
+    filterTexts: List<String> = listOf()
+): AccessibilityNodeInfo? {
+    this ?: return null
+    var find = getNextNodeByCurrentText(scrollViewId, childViewId, lastText, filterTexts)
+    var isEnd = false
+    var isRealEnd = false
+    while (find == null && !isRealEnd) {
+        val parent: AccessibilityNodeInfo =
+            rootInActiveWindow.findNodeById(scrollViewId) ?: return null
+        parent.scrollForward()
+        delay(200)
+        val tryFind = getNextNodeByCurrentText(scrollViewId, childViewId, lastText, filterTexts)
+        find = tryFind
+        if (isEnd && tryFind == null) {
+            isRealEnd = true
+        }
+        isEnd = tryFind == null
+    }
+    return find
+}
+
+private suspend fun AccessibilityService?.getNextNodeByCurrentText(
+    scrollViewId: String,
+    childViewId: String,
+    lastText: String?,
+    filterTexts: List<String> = listOf()
+): AccessibilityNodeInfo? {
+    this ?: return null
+    val parent: AccessibilityNodeInfo = rootInActiveWindow.findNodeById(scrollViewId) ?: return null
+    val find =
+        parent.findNodesById(childViewId).filterNot { filterTexts.contains(it.text.default()) }
+    return if (lastText.isNullOrBlank()) {
+        find.firstOrNull()
+    } else {
+        val lastIndex = find.indexOfFirst { it.text.default() == lastText }
+        if (lastIndex > -1) {
+            find.getOrNull(lastIndex + 1)
+        } else {
+            find.firstOrNull()
+        }
+    }
+}
+
 suspend fun AccessibilityService?.scrollToFindByText(
     scrollViewId: String,
     text: String
 ): AccessibilityNodeInfo? {
     this ?: return null
-    val find = rootInActiveWindow.findNodesByText(text).firstOrNull()
+    val find = rootInActiveWindow.findNodeByText(text)
     return if (find == null) {
-        rootInActiveWindow.findNodesById(scrollViewId).firstOrNull()?.scrollForward()
+        rootInActiveWindow.findNodeById(scrollViewId)?.scrollForward()
         delay(200)
         scrollToFindByText(scrollViewId, text)
     } else {
