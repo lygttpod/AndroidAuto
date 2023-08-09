@@ -36,17 +36,16 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
         val index = list.indexOfFirst { it.nickName == data.nickName }
         if (index == -1) {
             this.list.add(data)
-            notifyItemInserted(itemCount - 1)
+            notifyItemInserted(itemCount)
         } else {
             this.list[index] = data
             notifyItemChanged(index)
         }
     }
 
-    fun addDatas(list: MutableList<WxUserInfo>) {
-        val startIndex = itemCount
+    fun addDatas(newData: MutableList<WxUserInfo>) {
         this.list.addAll(list)
-        notifyItemRangeInserted(startIndex, itemCount)
+        notifyItemRangeInserted(list.size - newData.size, newData.size)
     }
 
     class FriendInfoViewHolder(view: View) : RecyclerView.ViewHolder(view) {

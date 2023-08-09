@@ -1,10 +1,12 @@
 package com.android.wechat.tools.page
 
 import android.util.Log
+import com.android.accessibility.ext.acc.click
 import com.android.accessibility.ext.acc.findAllChildByScroll
 import com.android.accessibility.ext.acc.findById
 import com.android.accessibility.ext.acc.findByIdAndText
 import com.android.accessibility.ext.acc.scrollToClickByText
+import com.android.accessibility.ext.acc.scrollToFindNextNodeByCurrentText
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
@@ -31,6 +33,19 @@ object WXContactPage : IPage {
         ) != null
     }
 
+    suspend fun inPage(): Boolean {
+        return retryCheckTaskWithLog(
+            "判断是否在通讯录列表并且获得了用户列表",
+            timeOutMillis = 10_000
+        ) {
+            isMe() && isShowUserList()
+        }
+    }
+
+    private fun isShowUserList(): Boolean {
+        return wxAccessibilityService?.findById(NodeInfo.ContactUserNode.nodeId) != null
+    }
+
     /**
      * 通过字段滑动列表去找到需要点击的用户
      */
@@ -41,6 +56,27 @@ object WXContactPage : IPage {
                     NodeInfo.ContactListNode.nodeId,
                     userName
                 )
+            }
+        }
+    }
+
+    /**
+     * 通过上次点击昵称去找下一个需要点击的节点
+     */
+    suspend fun scrollToClickNextNodeByCurrentText(lastUser: String?): String? {
+        return delayAction {
+            val taskName =
+                if (lastUser.isNullOrBlank()) "寻找并点击第一个好友" else "寻找并点击【$lastUser】的下一个好友"
+            retryTaskWithLog(taskName, timeOutMillis = 5 * 60_000) {
+                val find = wxAccessibilityService.scrollToFindNextNodeByCurrentText(
+                    NodeInfo.ContactListNode.nodeId,
+                    NodeInfo.ContactUserNode.nodeId,
+                    lastUser,
+                    // TODO: 自己的微信名，后续会通过获取当前登录微信解决
+                    filterTexts = listOf("自己的微信名", "微信团队", "微信文件传输助手")
+                )
+                find.click()
+                find?.text.default()
             }
         }
     }

@@ -60,13 +60,15 @@ class MainFragment : Fragment() {
     }
 
     private fun initObserver() {
-        FriendStatusHelper.friendListResult.observe(viewLifecycleOwner) { finish ->
-            val list = mutableListOf<WxUserInfo>()
-            FriendStatusHelper.getFriendList()
-                .forEach { list.add(WxUserInfo(it, "", FriendStatus.UNKNOW)) }
-            adapter.setData(list)
-        }
+
         FriendStatusHelper.taskCallBack = object : FriendStatusHelper.TaskCallBack {
+            override fun onGetAllFriend(list: List<String>) {
+                if (activity?.isDestroyed == true) return
+                runOnUiThread {
+                    adapter.setData(list.map { WxUserInfo(it) })
+                }
+            }
+
             override fun onFriendChecked(wxUserInfo: WxUserInfo) {
                 if (activity?.isDestroyed == true) return
                 runOnUiThread {
@@ -114,7 +116,7 @@ class MainFragment : Fragment() {
 
         binding.buttonCheck.setOnClickListener {
             GlobalScope.launch {
-                TaskHelper.startCheck()
+                TaskHelper.quickCheck()
             }
         }
 

@@ -21,28 +21,17 @@
         android:layout_height="wrap_content"
         android:text="获取好友列表"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/button_friend_check"
-        app:layout_constraintTop_toBottomOf="@id/button_open_service" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="-->"
-        android:textColor="@color/purple_700"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="@id/button_friend_list"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_friend_list" />
+        app:layout_constraintTop_toBottomOf="@id/button_open_service" />
 
     <Button
         android:id="@+id/button_friend_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="好友状态检测"
-        app:layout_constraintLeft_toRightOf="@id/button_friend_list"
+        android:text="根据获取的好友列表进行检测"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/button_friend_list" />
+        app:layout_constraintTop_toBottomOf="@+id/button_friend_list" />
 
     <Button
         android:id="@+id/button_check"
@@ -50,10 +39,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
-        android:text="一键检测《获取好友列表后自动开始检测》"
+        android:text="一键检测《通过假转账方式》"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_friend_list" />
+        app:layout_constraintTop_toBottomOf="@id/button_friend_check" />
 
     <Button
         android:id="@+id/button_check_by_group"
@@ -73,12 +62,12 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:gravity="center"
-        tools:text="任务总耗时: 100s"
         android:textColor="@color/friend_delete"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_check_by_group" />
+        app:layout_constraintTop_toBottomOf="@id/button_check_by_group"
+        tools:text="任务总耗时: 100s" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendRv"

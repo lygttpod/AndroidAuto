@@ -63,9 +63,9 @@ object WXRemittancePage : IPage {
                 if (friendName.isNotBlank()) {
                     val isNormal = friendName.contains("(*") && friendName.endsWith(")")
                     if (isNormal) {
-                        WxUserInfo(friendName, wxCode, FriendStatus.NORMAL)
+                        WxUserInfo(friendName, wxCode)
                     } else {
-                        WxUserInfo(friendName, wxCode, FriendStatus.UNKNOW)
+                        WxUserInfo(friendName, wxCode)
                     }
                 } else {
                     null

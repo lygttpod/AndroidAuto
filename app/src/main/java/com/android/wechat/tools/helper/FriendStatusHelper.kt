@@ -7,6 +7,7 @@ import com.android.wechat.tools.data.WxUserInfo
 object FriendStatusHelper {
 
     interface TaskCallBack {
+        fun onGetAllFriend(list: List<String>)
         fun onFriendChecked(wxUserInfo: WxUserInfo)
         fun onFriendChecked(list: MutableList<WxUserInfo>)
         fun onTaskStart()
@@ -15,7 +16,6 @@ object FriendStatusHelper {
 
     var taskCallBack: TaskCallBack? = null
 
-    var friendListResult = MutableLiveData<List<String>>()
     private val checkResultList = mutableListOf<WxUserInfo>()
     private val friendList = mutableListOf<String>()
 
@@ -42,7 +42,7 @@ object FriendStatusHelper {
     fun addFriends(list: List<String>) {
         friendList.clear()
         friendList.addAll(list)
-        friendListResult.postValue(list)
+        taskCallBack?.onGetAllFriend(list)
     }
 
     fun clearFriends() = friendList.clear()
