@@ -10,6 +10,7 @@ import com.android.accessibility.ext.acc.scrollToFindNextNodeByCurrentText
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
+import com.android.wechat.tools.helper.TaskHelper
 import com.android.wechat.tools.service.wxAccessibilityService
 import kotlin.streams.toList
 
@@ -72,8 +73,9 @@ object WXContactPage : IPage {
                     NodeInfo.ContactListNode.nodeId,
                     NodeInfo.ContactUserNode.nodeId,
                     lastUser,
-                    // TODO: 自己的微信名，后续会通过获取当前登录微信解决
-                    filterTexts = listOf("自己的微信名", "微信团队", "微信文件传输助手")
+                    filterTexts = mutableListOf("微信团队", "微信文件传输助手").apply {
+                        TaskHelper.myWxInfo?.nickName?.let { this.add(it) }
+                    }
                 )
                 find.click()
                 find?.text.default()

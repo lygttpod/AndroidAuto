@@ -15,6 +15,8 @@ object TaskHelper {
 
     private var lastCheckUser: WxUserInfo? = null
 
+    var myWxInfo: WxUserInfo? = null
+
     suspend fun startCheck() {
         FriendStatusHelper.init()
         App.instance().goToWx()
@@ -148,6 +150,9 @@ object TaskHelper {
         //回到微信首页
         val isHome = WXHomePage.backToHome()
         if (!isHome) return
+        val clickMineTab = WXHomePage.clickMineTab()
+        if (!clickMineTab) return
+        myWxInfo = WXMinePage.getMyWxInfo()
         //点击底部通讯录Tab
         val clickContactsTab = WXHomePage.clickContactsTab(true)
         if (!clickContactsTab) return

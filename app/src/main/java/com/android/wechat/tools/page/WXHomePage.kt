@@ -1,9 +1,6 @@
 package com.android.wechat.tools.page
 
-import com.android.accessibility.ext.acc.clickById
-import com.android.accessibility.ext.acc.clickByText
-import com.android.accessibility.ext.acc.findById
-import com.android.accessibility.ext.acc.pressBackButton
+import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.wechat.tools.service.WXAccessibility
 import com.android.wechat.tools.service.wxAccessibilityService
@@ -13,7 +10,8 @@ object WXHomePage : IPage {
 
     enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
         HomeBottomNavNode("", "com.tencent.mm:id/fj3", "首页底导布局"),
-        BottomNavContactsTabNode("通讯录", "", "首页底导【通讯录】tab"),
+        BottomNavContactsTabNode("通讯录", "com.tencent.mm:id/f2s", "首页底导【通讯录】tab"),
+        BottomNavMineTabNode("我", "com.tencent.mm:id/f2s", "首页底导【我】tab"),
         HomeRightTopPlusNode("", "com.tencent.mm:id/grs", "首页右上角【加号】按钮"),
         CreateGroupNode(
             "发起群聊",
@@ -71,10 +69,30 @@ object WXHomePage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【通讯录】tab") {
                 if (doubleClick) {
-                    wxAccessibilityService.clickByText(NodeInfo.BottomNavContactsTabNode.nodeText)
+                    wxAccessibilityService?.findByIdAndText(
+                        NodeInfo.BottomNavContactsTabNode.nodeId,
+                        NodeInfo.BottomNavContactsTabNode.nodeText
+                    ).click()
                     delay(300)
                 }
-                wxAccessibilityService.clickByText(NodeInfo.BottomNavContactsTabNode.nodeText)
+                wxAccessibilityService?.findByIdAndText(
+                    NodeInfo.BottomNavContactsTabNode.nodeId,
+                    NodeInfo.BottomNavContactsTabNode.nodeText
+                ).click()
+            }
+        }
+    }
+
+    /**
+     * 点击通讯录tab
+     */
+    suspend fun clickMineTab(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("点击【我的】tab") {
+                wxAccessibilityService?.findByIdAndText(
+                    NodeInfo.BottomNavMineTabNode.nodeId,
+                    NodeInfo.BottomNavMineTabNode.nodeText
+                ).click()
             }
         }
     }
