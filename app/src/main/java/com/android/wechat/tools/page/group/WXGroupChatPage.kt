@@ -42,7 +42,7 @@ object WXGroupChatPage : IPage {
      */
     suspend fun checkUserStatus(): MutableList<WxUserInfo>? {
         return delayAction(delayMillis = 5000) {
-            retryTaskWithLog("开始判断好友状态", timeOutMillis = 10000) {
+            retryTaskWithLog("开始判断好友状态", timeOutMillis = 20_000) {
                 //androidx.recyclerview.widget.RecyclerView → text =  → id = com.tencent.mm:id/b79
 
                 //android.widget.TextView → text = 你邀请XXX、XXX加入了群聊 → id = com.tencent.mm:id/b4b → description =  → clickable = true → scrollable = false → editable = false
@@ -139,7 +139,7 @@ object WXGroupChatPage : IPage {
 
     suspend fun clickMoreBtn(): Boolean {
         return delayAction {
-            retryCheckTaskWithLog("点击【群聊页右上角】按钮", timeOutMillis = 10000) {
+            retryCheckTaskWithLog("点击【群聊页右上角】按钮") {
                 //android.widget.ImageView → text =  → id = com.tencent.mm:id/eo → description = 聊天信息
                 wxAccessibilityService?.findById(NodeInfo.GroupChatRightTopNode.nodeId).click()
             }

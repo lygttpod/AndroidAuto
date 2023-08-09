@@ -36,7 +36,7 @@ object WXHomePage : IPage {
      * 等待打开微信APP
      */
     suspend fun waitEnterWxApp(): Boolean {
-        return retryCheckTaskWithLog("等待打开微信APP", timeOutMillis = 30_000) {
+        return retryCheckTaskWithLog("等待打开微信APP") {
             WXAccessibility.isInWXApp.get()
         }
     }
@@ -45,17 +45,15 @@ object WXHomePage : IPage {
      * 回到微信首页
      */
     suspend fun backToHome(): Boolean {
-        return retryCheckTaskWithLog("打开[微信首页]", timeOutMillis = 10000) {
+        return retryCheckTaskWithLog("打开[微信首页]") {
             if (isMe()) {
                 true
             } else {
-                delayAction(200) {
-                    // TODO: 判断不准确，待完善 
-                    if (WXAccessibility.isInWXApp.get()) {
-                        wxAccessibilityService?.pressBackButton()
-                    } else {
-                        throw RuntimeException("检测到不再微信首页了，终止自动化程序")
-                    }
+                // TODO: 判断不准确，待完善
+                if (WXAccessibility.isInWXApp.get()) {
+                    wxAccessibilityService?.pressBackButton()
+                } else {
+                    throw RuntimeException("检测到不再微信首页了，终止自动化程序")
                 }
                 false
             }

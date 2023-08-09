@@ -30,7 +30,7 @@ object WXCreateGroupPage : IPage {
      * 是否在聊天页获取到用户列表数据
      */
     suspend fun inPage(): Boolean {
-        return retryCheckTaskWithLog("判断是否是在发起群聊页", timeOutMillis = 10000) { isMe() && isShowUserList() }
+        return retryCheckTaskWithLog("判断是否是在发起群聊页") { isMe() && isShowUserList() }
     }
 
     private fun isShowUserList(): Boolean {

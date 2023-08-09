@@ -27,10 +27,7 @@ object WXContactInfoPage : IPage {
 
     suspend fun inPage(): Boolean {
         return delayAction {
-            retryCheckTaskWithLog(
-                "判断是否进入到【通讯录用户信息页】",
-                timeOutMillis = 10_000
-            ) { isMe() }
+            retryCheckTaskWithLog("判断是否进入到【通讯录用户信息页】") { isMe() }
         }
     }
 
@@ -38,7 +35,7 @@ object WXContactInfoPage : IPage {
      * 点击发消息按钮
      */
     suspend fun clickSendMsg(): Boolean {
-        return delayAction {
+        return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击【发消息】按钮") {
                 //【发消息】的按钮ID和【音视频通话】的ID一样，所以用文本区分
                 wxAccessibilityService.clickByText(NodeInfo.ContactInfoSendMsgNode.nodeText)

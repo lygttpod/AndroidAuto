@@ -31,7 +31,7 @@ object WXChattingPage : IPage {
      * 点击更多功能按钮
      */
     suspend fun clickMoreOption(): Boolean {
-        return delayAction {
+        return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击聊天页的功能区【+】按钮") {
                 wxAccessibilityService.clickById(NodeInfo.ChattingBottomPlusNode.nodeId)
             }
@@ -42,7 +42,7 @@ object WXChattingPage : IPage {
      * 点击转账
      */
     suspend fun clickTransferMoney(): Boolean {
-        return delayAction {
+        return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击聊天页功能区的【转账】按钮") {
 //                wxAccessibilityService?.printNodeInfo()
 //                wxAccessibilityService.findWithClickByText("转账")

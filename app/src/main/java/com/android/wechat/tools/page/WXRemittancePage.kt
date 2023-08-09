@@ -91,7 +91,7 @@ object WXRemittancePage : IPage {
      * 点击转账按钮
      */
     suspend fun clickTransferMoney(): Boolean {
-        return delayAction {
+        return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击转账页的【转账】按钮") {
                 wxAccessibilityService.clickById(NodeInfo.RemittanceTransferMoneyNode.nodeId)
             }

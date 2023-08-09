@@ -35,10 +35,7 @@ object WXContactPage : IPage {
     }
 
     suspend fun inPage(): Boolean {
-        return retryCheckTaskWithLog(
-            "判断是否在通讯录列表并且获得了用户列表",
-            timeOutMillis = 10_000
-        ) {
+        return retryCheckTaskWithLog("判断是否在通讯录列表并且获得了用户列表") {
             isMe() && isShowUserList()
         }
     }

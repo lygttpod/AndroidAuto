@@ -9,7 +9,7 @@ private const val TAG = "LogTracker"
 
 suspend fun <T>retryTaskWithLog(
     taskName: String,
-    timeOutMillis: Long = 5_000L,
+    timeOutMillis: Long = 10_000L,
     periodMillis: Long = 500L,
     predicate: suspend CoroutineScope.() -> T?
 ): T? {
@@ -23,7 +23,7 @@ suspend fun <T>retryTaskWithLog(
 
 suspend fun retryCheckTaskWithLog(
     taskName: String,
-    timeOutMillis: Long = 5_000,
+    timeOutMillis: Long = 10_000,
     periodMillis: Long = 500,
     predicate: suspend CoroutineScope.() -> Boolean
 ): Boolean {
