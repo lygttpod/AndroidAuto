@@ -36,6 +36,9 @@ object TaskByGroupHelper {
         FriendStatusHelper.init()
         App.instance().goToWx()
         App.instance().toast("正在准备检测环境，稍后自动开始")
+        //判断当前是否进入到微信
+        val inWxApp = WXHomePage.waitEnterWxApp()
+        if (!inWxApp) return
         FriendStatusHelper.taskCallBack?.onTaskStart()
         val taskStart = System.currentTimeMillis()
         singleTask()
@@ -51,10 +54,6 @@ object TaskByGroupHelper {
     }
 
     private suspend fun singleTask() {
-        //判断当前是否进入到微信
-        val inWxApp = WXHomePage.waitEnterWxApp()
-        if (!inWxApp) return
-        //判断当前是否已经成功打开微信
         val isHome = WXHomePage.backToHome()
         if (!isHome) return
         //微信首页添加好友的图标

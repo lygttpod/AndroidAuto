@@ -17,24 +17,6 @@ object TaskHelper {
 
     var myWxInfo: WxUserInfo? = null
 
-    suspend fun startCheck() {
-        FriendStatusHelper.init()
-        App.instance().goToWx()
-        App.instance().toast("正在准备检测环境，请稍等")
-        //判断当前是否进入到微信
-        val inWxApp = WXHomePage.waitEnterWxApp()
-        if (!inWxApp) return
-        //判断当前是否已经成功打开微信
-        val isHome = WXHomePage.backToHome()
-        if (!isHome) return
-        App.instance().toast("开始检测。。。请勿操作屏幕。。。请耐心等待")
-        getUserList().forEach { singleTask(it) }
-        if (WXHomePage.backToHome()) {
-            wxAccessibilityService?.pressBackButton()
-        }
-        App.instance().toast("检测结束，请回到APP查看好友状态")
-    }
-
     suspend fun startCheckFromList(list: List<String>) {
         FriendStatusHelper.clearFriendsStatusList()
         App.instance().goToWx()
@@ -128,10 +110,14 @@ object TaskHelper {
         //点击底部通讯录Tab 点两次是为了让列表回到顶部初始状态
         val clickContactsTab = WXHomePage.clickContactsTab(true)
         if (!clickContactsTab) return listOf()
+        val start = System.currentTimeMillis()
         val friends = WXContactPage.getAllFriends()
         //点击底部通讯录Tab，回到列表初始状态
         WXHomePage.clickContactsTab()
         FriendStatusHelper.addFriends(friends)
+        val end = System.currentTimeMillis()
+        FriendStatusHelper.taskCallBack?.onTaskEnd(end - start)
+
         if (isBack2App && WXHomePage.backToHome()) {
             wxAccessibilityService?.pressBackButton()
         }
@@ -155,8 +141,11 @@ object TaskHelper {
         myWxInfo = WXMinePage.getMyWxInfo()
         //点击底部通讯录Tab
         val clickContactsTab = WXHomePage.clickContactsTab(true)
+        val start = System.currentTimeMillis()
         if (!clickContactsTab) return
         quickCheckTask()
+        val end = System.currentTimeMillis()
+        FriendStatusHelper.taskCallBack?.onTaskEnd(end - start)
         if (WXHomePage.backToHome()) {
             wxAccessibilityService?.pressBackButton()
         }
@@ -164,9 +153,6 @@ object TaskHelper {
     }
 
     private suspend fun quickCheckTask() {
-        //判断当前是否进入到微信
-        val inWxApp = WXHomePage.waitEnterWxApp()
-        if (!inWxApp) return
         //回到微信首页
         val isHome = WXHomePage.backToHome()
         if (!isHome) return
@@ -206,6 +192,7 @@ object TaskHelper {
             userInfo.status = friendStatus.status
             lastCheckUser = userInfo
             FriendStatusHelper.addCheckResult(userInfo)
+            quickCheckTask()
             return
         }
         //输入转账金额

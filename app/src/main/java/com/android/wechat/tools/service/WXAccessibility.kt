@@ -31,11 +31,6 @@ class WXAccessibility : AsyncAccessibilityService() {
     }
 
     override fun asyncHandleAccessibilityEvent(event: AccessibilityEvent) {
-        val temp = event.packageName.default()
         Log.d("WXAccessibility", "==========$event")
-        if (temp == targetPackageName()) {
-            Log.d("WXAccessibility", "当前在微信APP中")
-            isInWXApp.set(true)
-        }
     }
 }

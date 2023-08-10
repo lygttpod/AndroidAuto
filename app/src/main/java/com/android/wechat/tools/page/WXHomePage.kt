@@ -37,7 +37,9 @@ object WXHomePage : IPage {
      */
     suspend fun waitEnterWxApp(): Boolean {
         return retryCheckTaskWithLog("等待打开微信APP") {
-            WXAccessibility.isInWXApp.get()
+            val inApp = isMe()
+            WXAccessibility.isInWXApp.set(inApp)
+            inApp
         }
     }
 

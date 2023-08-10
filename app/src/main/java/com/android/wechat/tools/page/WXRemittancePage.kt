@@ -63,7 +63,7 @@ object WXRemittancePage : IPage {
                 if (friendName.isNotBlank()) {
                     val isNormal = friendName.contains("(*") && friendName.endsWith(")")
                     if (isNormal) {
-                        WxUserInfo(friendName, wxCode)
+                        WxUserInfo(friendName, wxCode, FriendStatus.NORMAL)
                     } else {
                         WxUserInfo(friendName, wxCode)
                     }
@@ -103,7 +103,7 @@ object WXRemittancePage : IPage {
      */
     suspend fun checkStatus(): CheckStatus? {
         return delayAction {
-            retryTaskWithLog("查询支付状态") {
+            retryTaskWithLog("查询支付状态", 20_000) {
                 val find =
                     wxAccessibilityService?.findByContainsText(
                         false,

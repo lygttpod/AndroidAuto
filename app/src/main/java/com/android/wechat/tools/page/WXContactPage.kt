@@ -70,7 +70,7 @@ object WXContactPage : IPage {
                     NodeInfo.ContactListNode.nodeId,
                     NodeInfo.ContactUserNode.nodeId,
                     lastUser,
-                    filterTexts = mutableListOf("微信团队", "微信文件传输助手").apply {
+                    filterTexts = mutableListOf("微信团队", "文件传输助手").apply {
                         TaskHelper.myWxInfo?.nickName?.let { this.add(it) }
                     }
                 )
