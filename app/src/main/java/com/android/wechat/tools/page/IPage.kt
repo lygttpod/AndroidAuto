@@ -4,7 +4,7 @@ import kotlinx.coroutines.delay
 
 interface IPage {
 
-    fun delayTime() = 100L
+    fun delayTime() = 500L
 
     fun pageClassName(): String
 
