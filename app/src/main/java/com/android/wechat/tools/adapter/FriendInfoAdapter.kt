@@ -44,7 +44,7 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
     }
 
     fun addDatas(newData: MutableList<WxUserInfo>) {
-        this.list.addAll(list)
+        this.list.addAll(newData)
         notifyItemRangeInserted(list.size - newData.size, newData.size)
     }
 

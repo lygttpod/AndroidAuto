@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.accessibility.ext.isAccessibilityOpened
 import com.android.accessibility.ext.openAccessibilitySetting
 import com.android.accessibility.ext.runOnUiThread
+import com.android.accessibility.ext.toast
 import com.android.wechat.tools.adapter.FriendInfoAdapter
 import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.databinding.FragmentMainBinding
@@ -53,26 +54,28 @@ class MainFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        binding.friendRv.layoutManager = LinearLayoutManager(context)
-        binding.friendRv.adapter = adapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.recyclerView.adapter = adapter
     }
 
 
     override fun onResume() {
         super.onResume()
         WXAccessibility.isInWXApp.set(false)
-        accServiceLiveData.value = requireActivity().isAccessibilityOpened(WXAccessibility::class.java)
+        accServiceLiveData.value =
+            requireActivity().isAccessibilityOpened(WXAccessibility::class.java)
     }
 
     private fun initObserver() {
         accServiceLiveData.observe(viewLifecycleOwner) { open ->
-            binding.buttonPrintNode.isEnabled = open
-            binding.buttonFriendList.isEnabled = open
-            binding.buttonFriendCheck.isEnabled = open
-            binding.buttonCheck.isEnabled = open
-            binding.buttonCheckByGroup.isEnabled = open
+            binding.btnPrintNode.isEnabled = open
+            binding.btnGetFriendList.isEnabled = open
+            binding.btnCheck.isEnabled = open
+            binding.btnCheckByGroup.isEnabled = open
+            binding.btnWxAutoHb.isEnabled = open
+            binding.btnWxAutoReply.isEnabled = open
 
-            binding.buttonOpenService.text = if (open) "无障碍服务已开启" else "点击打开无障碍服务"
+            binding.btnOpenService.text = if (open) "无障碍服务已开启" else "点击打开无障碍服务"
 
         }
 
@@ -113,37 +116,34 @@ class MainFragment : Fragment() {
     }
 
     private fun initListener() {
-        binding.buttonOpenService.setOnClickListener {
+        binding.btnOpenService.setOnClickListener {
             activity?.openAccessibilitySetting()
         }
 
-        binding.buttonPrintNode.setOnClickListener {
+        binding.btnPrintNode.setOnClickListener {
             requireActivity().showPrintFloat()
         }
 
-        binding.buttonFriendList.setOnClickListener {
+        binding.btnGetFriendList.setOnClickListener {
             GlobalScope.launch {
                 TaskHelper.getUserList(true)
             }
         }
 
-        binding.buttonFriendCheck.setOnClickListener {
-            GlobalScope.launch {
-                TaskHelper.startCheckFromList(FriendStatusHelper.getFriendList())
-            }
-        }
-
-        binding.buttonCheck.setOnClickListener {
+        binding.btnCheck.setOnClickListener {
             GlobalScope.launch {
                 TaskHelper.quickCheck()
             }
         }
 
-        binding.buttonCheckByGroup.setOnClickListener {
+        binding.btnCheckByGroup.setOnClickListener {
             GlobalScope.launch {
                 TaskByGroupHelper.startCheckByCreateGroup()
             }
         }
+        binding.btnWxAutoHb.setOnClickListener { requireActivity().toast("待实现") }
+
+        binding.btnWxAutoReply.setOnClickListener { requireActivity().toast("待实现") }
     }
 
     override fun onDestroyView() {
