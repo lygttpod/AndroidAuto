@@ -1,6 +1,5 @@
 package com.android.accessibility.ext.acc
 
-import android.graphics.Rect
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.android.accessibility.ext.data.NodeWrapper
@@ -42,6 +41,8 @@ fun AccessibilityNodeInfo.contains(viewId: String): Boolean =
  */
 private fun AccessibilityNodeInfo?.findNodeWrapper(
     isPrint: Boolean = true,
+    prefix: String = "",
+    isLast: Boolean = false,
     compare: (NodeWrapper) -> Boolean
 ): NodeWrapper? {
     val node = this ?: return null
@@ -50,23 +51,29 @@ private fun AccessibilityNodeInfo?.findNodeWrapper(
         text = node.text.default(),
         id = node.viewIdResourceName.default(),
         description = node.contentDescription.default(),
-        clickable = node.isClickable,
-        scrollable = node.isScrollable,
-        editable = node.isEditable,
+        isClickable = node.isClickable,
+        isScrollable = node.isScrollable,
+        isEditable = node.isEditable,
         nodeInfo = node
     )
 
     if (compare(nodeWrapper)) {
-        Log.d("findNode", nodeWrapper.toString())
+        Log.d("findNodeWrapper", nodeWrapper.toString())
         return nodeWrapper
     }
+    val marker = if (isLast) """\--- """ else "+--- "
+    val currentPrefix = "$prefix$marker"
     if (isPrint) {
-        Log.d("printNodeInfo", nodeWrapper.toString())
+        Log.d("printNodeInfo", currentPrefix + nodeWrapper.toString())
     }
     val size = node.childCount
     if (size > 0) {
+        val childPrefix = prefix + if (isLast) "  " else "|  "
+        val lastChildIndex = size - 1
         for (index in 0 until size) {
-            val find = node.getChild(index).findNodeWrapper(isPrint, compare)
+            val isLastChild = index == lastChildIndex
+            val find =
+                node.getChild(index).findNodeWrapper(isPrint, childPrefix, isLastChild, compare)
             if (find != null) {
                 return find
             }
@@ -96,25 +103,29 @@ fun AccessibilityNodeInfo?.findNodeWrapperByContainsText(
     }
 }
 
-fun AccessibilityNodeInfo?.printNodeInfo() {
+fun AccessibilityNodeInfo?.printNodeInfo(prefix: String = "", isLast: Boolean = false) {
     val node = this ?: return
-    val bounds = Rect()
-    node.getBoundsInScreen(bounds)
     val nodeWrapper = NodeWrapper(
+        className = node.className.default(),
         text = node.text.default(),
         id = node.viewIdResourceName.default(),
-        className = node.className.default(),
         description = node.contentDescription.default(),
-        clickable = node.isClickable,
-        scrollable = node.isScrollable,
-        editable = node.isEditable,
+        isClickable = node.isClickable,
+        isScrollable = node.isScrollable,
+        isEditable = node.isEditable,
         nodeInfo = node
     )
-    Log.d("printNodeInfo", nodeWrapper.toString())
+    val marker = if (isLast) """\--- """ else "+--- "
+    val currentPrefix = "$prefix$marker"
+    Log.d("printNodeInfo", currentPrefix + nodeWrapper.toString())
+
     val size = node.childCount
     if (size > 0) {
+        val childPrefix = prefix + if (isLast) "  " else "|  "
+        val lastChildIndex = size - 1
         for (index in 0 until size) {
-            node.getChild(index).printNodeInfo()
+            val isLastChild = index == lastChildIndex
+            node.getChild(index).printNodeInfo(childPrefix, isLastChild)
         }
     }
 }

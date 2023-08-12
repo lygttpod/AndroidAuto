@@ -10,11 +10,10 @@ data class NodeWrapper(
     var text: String? = null,
     var id: String? = null,
     var description: String? = null,
-    var clickable: Boolean = false,
-    var scrollable: Boolean = false,
-    var editable: Boolean = false,
+    var isClickable: Boolean = false,
+    var isScrollable: Boolean = false,
+    var isEditable: Boolean = false,
     var nodeInfo: AccessibilityNodeInfo? = null
 ) {
-    override fun toString() =
-        "className = $className → text = $text → id = $id → description = $description → clickable = $clickable → scrollable = $scrollable → editable = $editable"
+    override fun toString() = "className = $className → text = $text → id = $id → description = $description → isClickable = $isClickable → isScrollable = $isScrollable → isEditable = $isEditable"
 }
