@@ -85,12 +85,7 @@ object WXContactPage : IPage {
             retryTaskWithLog("获取通讯录好友列表", timeOutMillis = 2 * 60_000) {
                 val friends = wxAccessibilityService.findAllChildByScroll(
                     NodeInfo.ContactListNode.nodeId,
-                    NodeInfo.ContactUserNode.nodeId,
-                    stopFindBlock = {
-                        //通讯录列表最后是 text = xxx个朋友 → id = com.tencent.mm:id/bmm
-                        //找到这个元素说明滚动到底了，可以终止滚动搜索
-                        wxAccessibilityService?.findById(NodeInfo.ContactUserCountNode.nodeId) != null
-                    }
+                    NodeInfo.ContactUserNode.nodeId
                 )
                 val result = friends.stream().map { it.text.default() }
                     .filter { it != "微信团队" && it != "文件传输助手" }.toList()

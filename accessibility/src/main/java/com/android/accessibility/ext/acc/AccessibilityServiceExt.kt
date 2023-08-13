@@ -233,35 +233,39 @@ fun AccessibilityService.scrollBackward(
 suspend fun AccessibilityService?.findAllChildByScroll(
     parentViewId: String,
     childViewId: String,
-    stopFindBlock: (MutableList<AccessibilityNodeInfo>) -> Boolean
 ): List<AccessibilityNodeInfo> {
     this ?: return listOf()
     val rootNode = rootInActiveWindow
     val list = mutableListOf<AccessibilityNodeInfo>()
-    val find = findChildNodes(parentViewId, childViewId)
-    find.forEach { node ->
-        val newNode = list.find { it.text.default() == node.text.default() } == null
-        if (newNode) {
-            list.add(node)
-        }
+    val finds = findAllChildByFilter(parentViewId, childViewId) { filter ->
+        //倒叙查找可以提示查找效率，因为新增的数据是在列表后边的
+        list.findLast { it.text.default() == filter.text.default() } != null
     }
-
+    list.addAll(finds)
     val parentNode = rootNode.findNodeById(parentViewId) ?: return list
     var isStop = false
     while (parentNode.isScrollable && !isStop) {
         parentNode.scrollForward()
-        delay(800)//时间太短的话有时候会获取不到节点信息
-        val findNextNodes = findChildNodes(parentViewId, childViewId)
-        findNextNodes.forEach { node ->
-            val newNode = list.find { it.text.default() == node.text.default() } == null
-            if (newNode) {
-                list.add(node)
-            }
+        delay(500)//时间太短的话有时候会获取不到节点信息
+        val findNextNodes = findAllChildByFilter(parentViewId, childViewId) { filter ->
+            list.findLast { it.text.default() == filter.text.default() } != null
         }
-        isStop = stopFindBlock(list)
+        isStop = findNextNodes.isEmpty()
+        if (isStop) break
+        list.addAll(findNextNodes)
     }
     return list
 }
+
+private fun AccessibilityService?.findAllChildByFilter(
+    parentViewId: String,
+    childViewId: String,
+    filterPredicate: (AccessibilityNodeInfo) -> Boolean
+): List<AccessibilityNodeInfo> {
+    val find = findChildNodes(parentViewId, childViewId)
+    return find.filterNot { filterPredicate(it) }
+}
+
 
 fun AccessibilityService?.findChildNodes(
     parentViewId: String,
