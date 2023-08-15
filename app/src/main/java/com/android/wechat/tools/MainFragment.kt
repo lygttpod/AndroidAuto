@@ -72,8 +72,8 @@ class MainFragment : Fragment() {
             binding.btnGetFriendList.isEnabled = open
             binding.btnCheck.isEnabled = open
             binding.btnCheckByGroup.isEnabled = open
-            binding.btnWxAutoHb.isEnabled = open
-            binding.btnWxAutoReply.isEnabled = open
+            binding.btnWxAutoHb.isEnabled = false
+            binding.btnWxAutoReply.isEnabled = false
 
             binding.btnOpenService.text = if (open) "无障碍服务已开启" else "点击打开无障碍服务"
 

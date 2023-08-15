@@ -38,7 +38,7 @@
         android:id="@+id/btn_check"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="一键检测《通过假转账方式》"
+        android:text="一键检测好友状态《假转账方式》"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_get_friend_list" />
@@ -47,7 +47,7 @@
         android:id="@+id/btn_check_by_group"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="一键检测《通过拉群方式》"
+        android:text="一键检测好友状态《拉群方式》"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_check" />
@@ -56,6 +56,7 @@
         android:id="@+id/btn_wx_auto_hb"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:text="微信自动抢红包"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -65,6 +66,7 @@
         android:id="@+id/btn_wx_auto_reply"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:enabled="false"
         android:text="微信自动回复消息"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
