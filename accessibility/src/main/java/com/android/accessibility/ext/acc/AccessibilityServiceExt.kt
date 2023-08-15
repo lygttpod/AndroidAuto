@@ -68,17 +68,13 @@ suspend fun AccessibilityService?.scrollToFindNextNodeByCurrentText(
     this ?: return null
     var find = getNextNodeByCurrentText(scrollViewId, childViewId, lastText, filterTexts)
     var isEnd = false
-    var isRealEnd = false
-    while (find == null && !isRealEnd) {
+    while (find == null && !isEnd) {
         val parent: AccessibilityNodeInfo =
             rootInActiveWindow.findNodeById(scrollViewId) ?: return null
         parent.scrollForward()
         delay(200)
         val tryFind = getNextNodeByCurrentText(scrollViewId, childViewId, lastText, filterTexts)
         find = tryFind
-        if (isEnd && tryFind == null) {
-            isRealEnd = true
-        }
         isEnd = tryFind == null
     }
     return find
