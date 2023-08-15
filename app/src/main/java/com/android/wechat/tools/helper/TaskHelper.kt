@@ -185,6 +185,9 @@ object TaskHelper {
         //点击聊天页功能区转账按钮
         val clickTransferMoney = WXChattingPage.clickTransferMoney()
         if (!clickTransferMoney) return
+        //输入转账金额
+        val inputMoney = WXRemittancePage.inputMoney()
+        if (!inputMoney) return
         //第一次判断是否是正常好友
         val friendStatus = WXRemittancePage.checkIsNormalFriend()
         if (friendStatus != null && friendStatus.status == FriendStatus.NORMAL) {
@@ -195,9 +198,6 @@ object TaskHelper {
             quickCheckTask()
             return
         }
-        //输入转账金额
-        val inputMoney = WXRemittancePage.inputMoney()
-        if (!inputMoney) return
         //点击转账按钮
         val clickTransfer = WXRemittancePage.clickTransferMoney()
         if (!clickTransfer) return
