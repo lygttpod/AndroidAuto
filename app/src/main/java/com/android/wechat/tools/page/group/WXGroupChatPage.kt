@@ -33,15 +33,21 @@ object WXGroupChatPage : IPage {
 
     suspend fun inPage(): Boolean {
         return delayAction {
-            retryCheckTaskWithLog("判断当前是否在群聊页", timeOutMillis = 20_000) { isMe() }
+            retryCheckTaskWithLog("判断当前是否在群聊页", timeOutMillis = 30_000) { isMe() && showContent() }
         }
     }
 
+    private fun showContent(): Boolean {
+        return wxAccessibilityService.findChildNodes(
+            NodeInfo.GroupChatContentListNode.nodeId,
+            NodeInfo.GroupChatMsgNode.nodeId
+        ).isNotEmpty()
+    }
     /**
      * 检测当前群聊里用户的状态
      */
     suspend fun checkUserStatus(): MutableList<WxUserInfo>? {
-        return delayAction(delayMillis = 5000) {
+        return delayAction {
             retryTaskWithLog("开始判断好友状态", timeOutMillis = 20_000) {
                 //androidx.recyclerview.widget.RecyclerView → text =  → id = com.tencent.mm:id/b79
 

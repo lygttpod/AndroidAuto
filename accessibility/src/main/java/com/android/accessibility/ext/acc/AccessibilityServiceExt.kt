@@ -283,19 +283,17 @@ fun AccessibilityService?.findChildNodes(
     return findList
 }
 
-suspend fun AccessibilityService?.selectChildByScroll(
+suspend fun AccessibilityService?.selectChild(
     parentViewId: String,
     childViewId: String,
     maxSelectCount: Int = Int.MAX_VALUE,
-    startText: String? = null,
-    onScrollEnd: (() -> Unit)? = null
+    lastText: String? = null,
 ): List<String> {
     this ?: return listOf()
-    val rootNode = rootInActiveWindow
     val findTexts = mutableListOf<String>()
     val findNodes = findChildNodes(parentViewId, childViewId)
-    val startIndex = findNodes.indexOfFirst { it.text.default() == startText }
-    findNodes.filterIndexed { index, info -> index > startIndex }.forEach {
+    val findIndex = findNodes.indexOfFirst { it.text.default() == lastText }
+    findNodes.filterIndexed { index, info -> index > findIndex }.forEach {
         val text = it.text.default()
         if (!findTexts.contains(text)) {
             if (findTexts.size < maxSelectCount) {
@@ -310,49 +308,36 @@ suspend fun AccessibilityService?.selectChildByScroll(
             }
         }
     }
+    return findTexts
+}
 
+suspend fun AccessibilityService?.selectChildByScroll(
+    parentViewId: String,
+    childViewId: String,
+    maxSelectCount: Int = Int.MAX_VALUE,
+    lastText: String? = null,
+): List<String> {
+    this ?: return listOf()
+    val rootNode = rootInActiveWindow
+    val findTexts = mutableListOf<String>()
+    val select = if (lastText.isNullOrBlank()) {
+        selectChild(parentViewId, childViewId, maxSelectCount, lastText)
+    } else {
+        scrollToFindByText(parentViewId, lastText)
+        selectChild(parentViewId, childViewId, maxSelectCount, lastText)
+    }
+    findTexts.addAll(select)
+    if (findTexts.size == maxSelectCount) return findTexts
     val parentNode = rootNode.findNodeById(parentViewId) ?: return findTexts
-    var lastTemp = findNodes
-    //第一次滚动到底的判断，测试中发现，有一定概率出现滚动到上次选择的最后一个好友正好是当前一屏中的第一个，就会误判为滚动完成
     var isEnd = false
-    //当第一次判断为滚动结束后，在家滚动一次后二次判断，可以确保真正的滚动到底
-    var isRealEnd = false
-    while (parentNode.isScrollable && findTexts.size < maxSelectCount && !isRealEnd) {
+    while (parentNode.isScrollable && findTexts.size < maxSelectCount && !isEnd) {
         parentNode.scrollForward()
         Log.d("selectChildByScroll", "滚动了一屏")
         delay(1000)
-        val findNextNodes = findChildNodes(parentViewId, childViewId)
-        val tempEnd = lastTemp.lastOrNull()?.text == findNextNodes.lastOrNull()?.text
-        if (isEnd && tempEnd) {
-            isRealEnd = true
-        }
-        isEnd = tempEnd
-
-        Log.d(
-            "selectChildByScroll",
-            "=============是否搜索到底了  isEnd = $isEnd  isRealEnd = $isRealEnd  lastTemp = ${lastTemp.lastOrNull()?.text}   currentLast = ${findNextNodes.lastOrNull()?.text}"
-        )
-        if (isRealEnd) {
-            onScrollEnd?.invoke()
-            break
-        }
-        lastTemp = findNextNodes
-        if (!isEnd) {
-            findNextNodes.forEach {
-                val text = it.text.default()
-                if (!findTexts.contains(text)) {
-                    if (findTexts.size < maxSelectCount) {
-                        val clicked = it.click()
-                        if (clicked) {
-                            findTexts.add(text)
-                            Log.d("selectChildByScroll", "click: 点击 $text")
-                        }
-                    } else {
-                        return@forEach
-                    }
-                }
-            }
-        }
+        val findNextNodes = selectChild(parentViewId, childViewId, maxSelectCount - findTexts.size, findTexts.lastOrNull() ?: lastText)
+        isEnd = findNextNodes.isEmpty()
+        Log.d("selectChildByScroll", "=============是否搜索到底了  isEnd = $isEnd")
+        findTexts.addAll(findNextNodes)
     }
     return findTexts
 }

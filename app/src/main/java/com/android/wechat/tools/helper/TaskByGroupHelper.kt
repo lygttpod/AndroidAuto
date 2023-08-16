@@ -5,6 +5,7 @@ import com.android.accessibility.ext.acc.pressBackButton
 import com.android.accessibility.ext.goToWx
 import com.android.accessibility.ext.toast
 import com.android.wechat.tools.App
+import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.ktx.formatTime
 import com.android.wechat.tools.page.WXHomePage
 import com.android.wechat.tools.page.group.WXCreateGroupPage
@@ -27,12 +28,8 @@ object TaskByGroupHelper {
     //已检测过的用户列表
     val alreadyCheckedUsers = mutableListOf<String>()
 
-    //全部好友是否检查完毕
-    var isCheckedFinished = AtomicBoolean(false)
-
     suspend fun startCheckByCreateGroup() {
         alreadyCheckedUsers.clear()
-        isCheckedFinished.set(false)
         FriendStatusHelper.init()
         App.instance().goToWx()
         App.instance().toast("正在准备检测环境，稍后自动开始")
@@ -67,9 +64,11 @@ object TaskByGroupHelper {
         if (!isCreateGroupPage) return
         //选择这次选择入群的好友列表
         val selectUser = WXCreateGroupPage.selectUser()
-        Log.d("LogTracker", "selectUser: ${selectUser?.size}")
         //当发现选择建群的用户少于2个人的时候，无法建群(即选择一个人是无法拉群的)
-        if (selectUser == null || selectUser.size < 2) {
+        if (selectUser.size <= 1) {
+            if (selectUser.size == 1) {
+                FriendStatusHelper.addCheckResults(mutableListOf(WxUserInfo(selectUser.first())))
+            }
             WXHomePage.backToHome()
             return
         }
@@ -108,12 +107,7 @@ object TaskByGroupHelper {
         if (!clickDeleteGroupDialog) return
 
         delay(2000)
-
-        //未监测完就循环执行以上步骤
-        if (!isCheckedFinished.get()) {
-            singleTask()
-        }
-
-        //本次检测流程全部执行完毕
+        //循环执行以上步骤
+        singleTask()
     }
 }
