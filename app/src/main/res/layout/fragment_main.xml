@@ -52,25 +52,18 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_check" />
 
-    <Button
+    <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/btn_wx_auto_hb"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:enabled="false"
+        android:background="@color/purple_200"
+        android:checked="false"
+        android:gravity="center"
         android:text="微信自动抢红包"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_check_by_group" />
-
-    <Button
-        android:id="@+id/btn_wx_auto_reply"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="微信自动回复消息"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto_hb" />
 
     <TextView
         android:id="@+id/tv_task_des"
@@ -83,7 +76,7 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto_reply"
+        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto_hb"
         tools:text="任务总耗时: 100s" />
 
     <androidx.recyclerview.widget.RecyclerView

@@ -54,6 +54,8 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
         fun bindData(wxUserInfo: WxUserInfo) {
             binding.tvNickName.text = wxUserInfo.nickName
             binding.tvWxCode.text = wxUserInfo.wxCode
+            binding.tvWxCode.visibility =
+                if (wxUserInfo.wxCode.isNullOrBlank()) View.GONE else View.VISIBLE
             binding.tvStatus.text = wxUserInfo.status.status
             val color = when (wxUserInfo.status) {
                 FriendStatus.BLACK -> R.color.friend_black

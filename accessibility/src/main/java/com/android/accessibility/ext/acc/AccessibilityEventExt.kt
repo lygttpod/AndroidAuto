@@ -16,6 +16,12 @@ fun AccessibilityEvent.isWindowContentChanged() =
     eventType == AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
 
 /**
+ * 通知变化
+ */
+fun AccessibilityEvent.isNotificationStateChanged() =
+    eventType == AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED
+
+/**
  * 是否是点击事件
  */
 fun AccessibilityEvent.isViewClicked(): Boolean =

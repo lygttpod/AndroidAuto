@@ -22,6 +22,8 @@ import com.android.wechat.tools.helper.TaskHelper
 import com.android.wechat.tools.ktx.formatTime
 import com.android.wechat.tools.ktx.showPrintFloat
 import com.android.wechat.tools.service.WXAccessibility
+import com.android.wechat.tools.service.WxHbAccessibility
+import com.android.wechat.tools.service.wxHbAccessibilityService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -35,6 +37,7 @@ class MainFragment : Fragment() {
     private val adapter = FriendInfoAdapter()
 
     private val accServiceLiveData = MutableLiveData<Boolean>()
+    private val accHBServiceLiveData = MutableLiveData<Boolean>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +67,8 @@ class MainFragment : Fragment() {
         WXAccessibility.isInWXApp.set(false)
         accServiceLiveData.value =
             requireActivity().isAccessibilityOpened(WXAccessibility::class.java)
+        accHBServiceLiveData.value =
+            requireActivity().isAccessibilityOpened(WxHbAccessibility::class.java)
     }
 
     private fun initObserver() {
@@ -72,11 +77,15 @@ class MainFragment : Fragment() {
             binding.btnGetFriendList.isEnabled = open
             binding.btnCheck.isEnabled = open
             binding.btnCheckByGroup.isEnabled = open
-            binding.btnWxAutoHb.isEnabled = false
-            binding.btnWxAutoReply.isEnabled = false
 
             binding.btnOpenService.text = if (open) "无障碍服务已开启" else "点击打开无障碍服务"
 
+        }
+
+        accHBServiceLiveData.observe(viewLifecycleOwner) { open ->
+            val currentStatus = binding.btnWxAutoHb.isChecked
+            if (currentStatus == open) return@observe
+            binding.btnWxAutoHb.isChecked = open
         }
 
         FriendStatusHelper.taskCallBack = object : FriendStatusHelper.TaskCallBack {
@@ -141,9 +150,10 @@ class MainFragment : Fragment() {
                 TaskByGroupHelper.startCheckByCreateGroup()
             }
         }
-        binding.btnWxAutoHb.setOnClickListener { requireActivity().toast("待实现") }
 
-        binding.btnWxAutoReply.setOnClickListener { requireActivity().toast("待实现") }
+        binding.btnWxAutoHb.setOnCheckedChangeListener { buttonView, isChecked ->
+            activity?.openAccessibilitySetting()
+        }
     }
 
     override fun onDestroyView() {

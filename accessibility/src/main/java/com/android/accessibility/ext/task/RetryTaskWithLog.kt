@@ -30,6 +30,7 @@ suspend fun retryCheckTaskWithLog(
     return try {
         retryCheckTask(timeOutMillis, periodMillis, LogTracker(taskName), predicate)
     } catch (e: Exception) {
+        e.printStackTrace()
         false
     }
 }

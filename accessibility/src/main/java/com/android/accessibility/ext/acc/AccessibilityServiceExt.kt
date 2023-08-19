@@ -15,6 +15,10 @@ fun AccessibilityService.findById(id: String): AccessibilityNodeInfo? {
     return rootInActiveWindow.findNodesById(id).firstOrNull()
 }
 
+fun AccessibilityService?.findNodesById(id: String): List<AccessibilityNodeInfo> {
+    return this?.rootInActiveWindow?.findNodesById(id) ?: listOf()
+}
+
 fun AccessibilityService.findByText(text: String): AccessibilityNodeInfo? {
     return rootInActiveWindow.findNodeByText(text)
 }
@@ -30,11 +34,15 @@ fun AccessibilityService.findByIdAndText(id: String, text: String): Accessibilit
     return rootInActiveWindow.findNodesById(id).firstOrNull { it.text == text }
 }
 
-fun AccessibilityService?.clickById(id: String): Boolean {
+fun AccessibilityService?.clickById(id: String, gestureClick: Boolean = true): Boolean {
     this ?: return false
     val find = rootInActiveWindow.findNodesById(id).firstOrNull() ?: return false
-    gestureClick(find)
-    return true
+    return if (gestureClick) {
+        gestureClick(find)
+        true
+    } else {
+        find.click()
+    }
 }
 
 fun AccessibilityService?.clickByText(text: String): Boolean {
@@ -334,7 +342,12 @@ suspend fun AccessibilityService?.selectChildByScroll(
         parentNode.scrollForward()
         Log.d("selectChildByScroll", "滚动了一屏")
         delay(1000)
-        val findNextNodes = selectChild(parentViewId, childViewId, maxSelectCount - findTexts.size, findTexts.lastOrNull() ?: lastText)
+        val findNextNodes = selectChild(
+            parentViewId,
+            childViewId,
+            maxSelectCount - findTexts.size,
+            findTexts.lastOrNull() ?: lastText
+        )
         isEnd = findNextNodes.isEmpty()
         Log.d("selectChildByScroll", "=============是否搜索到底了  isEnd = $isEnd")
         findTexts.addAll(findNextNodes)
