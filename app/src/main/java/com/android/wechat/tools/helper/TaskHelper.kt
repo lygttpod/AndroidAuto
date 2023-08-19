@@ -110,6 +110,9 @@ object TaskHelper {
         //点击底部通讯录Tab 点两次是为了让列表回到顶部初始状态
         val clickContactsTab = WXHomePage.clickContactsTab(true)
         if (!clickContactsTab) return listOf()
+        //判断是否从微信服务器拉到了用户信息
+        val isShowUserList = WXContactPage.inPage()
+        if (!isShowUserList) return listOf()
         val start = System.currentTimeMillis()
         val friends = WXContactPage.getAllFriends()
         //点击底部通讯录Tab，回到列表初始状态
