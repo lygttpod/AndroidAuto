@@ -1,26 +1,24 @@
 package com.android.wechat.tools.page
 
 import android.util.Log
-import com.android.accessibility.ext.acc.click
-import com.android.accessibility.ext.acc.findAllChildByScroll
-import com.android.accessibility.ext.acc.findById
-import com.android.accessibility.ext.acc.findByIdAndText
-import com.android.accessibility.ext.acc.scrollToClickByText
-import com.android.accessibility.ext.acc.scrollToFindNextNodeByCurrentText
+import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.helper.TaskHelper
 import com.android.wechat.tools.service.wxAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 import kotlin.streams.toList
 
 object WXContactPage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        ContactTitleNode("通讯录", "android:id/text1", "通讯录标题"),
-        ContactListNode("", "com.tencent.mm:id/js", "通讯录列表-RecyclerView"),
-        ContactUserNode("", "com.tencent.mm:id/hg4", "通讯录列表中的好友"),
-        ContactUserCountNode("", "com.tencent.mm:id/bmm", "通讯录列表最底部的【xxx个朋友】node"),
+    interface Nodes {
+        val contactTitleNode: NodeInfo
+        val contactListNode: NodeInfo
+        val contactUserNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = "com.tencent.mm.plugin.profile.ui.ContactInfoUI"
@@ -29,8 +27,8 @@ object WXContactPage : IPage {
 
     override fun isMe(): Boolean {
         return wxAccessibilityService?.findByIdAndText(
-            NodeInfo.ContactTitleNode.nodeId,
-            NodeInfo.ContactTitleNode.nodeText
+            Nodes.contactTitleNode.nodeId,
+            Nodes.contactTitleNode.nodeText
         ) != null
     }
 
@@ -41,7 +39,7 @@ object WXContactPage : IPage {
     }
 
     private fun isShowUserList(): Boolean {
-        return wxAccessibilityService?.findById(NodeInfo.ContactUserNode.nodeId) != null
+        return wxAccessibilityService?.findById(Nodes.contactUserNode.nodeId) != null
     }
 
     /**
@@ -51,7 +49,7 @@ object WXContactPage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【$userName】用户", timeOutMillis = 60_000) {
                 wxAccessibilityService.scrollToClickByText(
-                    NodeInfo.ContactListNode.nodeId,
+                    Nodes.contactListNode.nodeId,
                     userName
                 )
             }
@@ -67,8 +65,8 @@ object WXContactPage : IPage {
                 if (lastUser.isNullOrBlank()) "寻找并点击第一个好友" else "寻找并点击【$lastUser】的下一个好友"
             retryTaskWithLog(taskName, timeOutMillis = 5 * 60_000) {
                 val find = wxAccessibilityService.scrollToFindNextNodeByCurrentText(
-                    NodeInfo.ContactListNode.nodeId,
-                    NodeInfo.ContactUserNode.nodeId,
+                    Nodes.contactListNode.nodeId,
+                    Nodes.contactUserNode.nodeId,
                     lastUser,
                     filterTexts = mutableListOf("微信团队", "文件传输助手").apply {
                         TaskHelper.myWxInfo?.nickName?.let { this.add(it) }
@@ -84,8 +82,8 @@ object WXContactPage : IPage {
         return delayAction {
             retryTaskWithLog("获取通讯录好友列表", timeOutMillis = 2 * 60_000) {
                 val friends = wxAccessibilityService.findAllChildByScroll(
-                    NodeInfo.ContactListNode.nodeId,
-                    NodeInfo.ContactUserNode.nodeId
+                    Nodes.contactListNode.nodeId,
+                    Nodes.contactUserNode.nodeId
                 )
                 val result = friends.stream().map { it.text.default() }
                     .filter { it != "微信团队" && it != "文件传输助手" }.toList()

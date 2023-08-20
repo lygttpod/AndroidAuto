@@ -7,14 +7,37 @@
     android:padding="20dp"
     tools:context=".MainFragment">
 
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/btn_wx_version"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_wx_version"
+        app:layout_constraintLeft_toRightOf="@+id/tv_wx_version"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_wx_version" />
+
+    <TextView
+        android:id="@+id/tv_wx_version"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="15dp"
+        android:gravity="center_vertical"
+        android:text="选择已适配的微信版本"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/btn_open_service"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="打开无障碍服务"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/btn_print_node"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btn_wx_version" />
 
     <Button
         android:id="@+id/btn_print_node"

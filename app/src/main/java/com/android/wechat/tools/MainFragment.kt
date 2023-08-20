@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,16 +17,15 @@ import com.android.accessibility.ext.toast
 import com.android.wechat.tools.adapter.FriendInfoAdapter
 import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.databinding.FragmentMainBinding
-import com.android.wechat.tools.em.FriendStatus
-import com.android.wechat.tools.helper.FloatManager
-import com.android.wechat.tools.helper.TaskByGroupHelper
 import com.android.wechat.tools.helper.FriendStatusHelper
+import com.android.wechat.tools.helper.TaskByGroupHelper
 import com.android.wechat.tools.helper.TaskHelper
 import com.android.wechat.tools.ktx.formatTime
 import com.android.wechat.tools.ktx.showPrintFloat
 import com.android.wechat.tools.service.WXAccessibility
 import com.android.wechat.tools.service.WxHbAccessibility
-import com.android.wechat.tools.service.wxHbAccessibilityService
+import com.android.wechat.tools.version.currentWXVersion
+import com.android.wechat.tools.version.wechatVersionArray
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -131,6 +133,24 @@ class MainFragment : Fragment() {
 
         binding.btnPrintNode.setOnClickListener {
             requireActivity().showPrintFloat()
+        }
+
+        binding.btnWxVersion.adapter =
+            ArrayAdapter(requireContext(), R.layout.item_version, wechatVersionArray)
+
+        binding.btnWxVersion.onItemSelectedListener = object : OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                currentWXVersion = wechatVersionArray[position]
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
         }
 
         binding.btnGetFriendList.setOnClickListener {

@@ -1,30 +1,26 @@
 package com.android.wechat.tools.page
 
-import com.android.accessibility.ext.acc.clickById
-import com.android.accessibility.ext.acc.clickByText
-import com.android.accessibility.ext.acc.findByContainsText
-import com.android.accessibility.ext.acc.findById
-import com.android.accessibility.ext.acc.inputText
+import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.em.CheckStatus
 import com.android.wechat.tools.em.FriendStatus
 import com.android.wechat.tools.service.wxAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 
 object WXRemittancePage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        RemittanceUserNode("", "com.tencent.mm:id/inh", "转账页的转账对象node【转账给 测试(**名)】"),
-        RemittanceWxCodeNode("", "com.tencent.mm:id/ini", "转账页的微信号【微信号: wxid_xxx】"),
-        RemittanceInputMoneyNode("", "com.tencent.mm:id/lg_", "转账页的输入转账金额的输入框"),
-        RemittanceTransferMoneyNode("", "com.tencent.mm:id/ffp", "转账页的【转账】按钮"),
-        RemittanceDialogConfirmNode(
-            "我知道了",
-            "com.tencent.mm:id/guw",
-            "转账页的转账弹框【我知道了】按钮"
-        ),
+    interface Nodes {
+        val remittanceUserNode: NodeInfo
+        val remittanceWxCodeNode: NodeInfo
+        val remittanceInputMoneyNode: NodeInfo
+        val remittanceTransferMoneyNode: NodeInfo
+        val remittanceDialogConfirmNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = "com.tencent.mm.plugin.remittance.ui.RemittanceUI"
@@ -45,7 +41,7 @@ object WXRemittancePage : IPage {
             wxUserInfo = retryTaskWithLog("获取转账页的用户名和微信号") {
                 //android.widget.TextView → 转账给 测试(**名) → com.tencent.mm:id/inh
                 val friendName = wxAccessibilityService
-                    ?.findById(NodeInfo.RemittanceUserNode.nodeId)
+                    ?.findById(Nodes.remittanceUserNode.nodeId)
                     ?.text
                     .default()
                     .split("转账给")
@@ -54,7 +50,7 @@ object WXRemittancePage : IPage {
                     .trim()
                 //android.widget.TextView → 微信号: wxid_xxx → com.tencent.mm:id/ini
                 val wxCode = wxAccessibilityService
-                    ?.findById(NodeInfo.RemittanceWxCodeNode.nodeId)
+                    ?.findById(Nodes.remittanceWxCodeNode.nodeId)
                     ?.text
                     ?.split("微信号:")
                     ?.getOrNull(1)
@@ -81,7 +77,7 @@ object WXRemittancePage : IPage {
     suspend fun inputMoney(money: String = "0.01"): Boolean {
         return delayAction {
             retryCheckTaskWithLog("自动【输入转账金额】操作") {
-                wxAccessibilityService?.findById(NodeInfo.RemittanceInputMoneyNode.nodeId)
+                wxAccessibilityService?.findById(Nodes.remittanceInputMoneyNode.nodeId)
                     ?.inputText(money) == true
             }
         }
@@ -93,7 +89,7 @@ object WXRemittancePage : IPage {
     suspend fun clickTransferMoney(): Boolean {
         return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击转账页的【转账】按钮") {
-                wxAccessibilityService.clickById(NodeInfo.RemittanceTransferMoneyNode.nodeId)
+                wxAccessibilityService.clickById(Nodes.remittanceTransferMoneyNode.nodeId)
             }
         }
     }
@@ -125,7 +121,7 @@ object WXRemittancePage : IPage {
         delayAction {
             retryCheckTaskWithLog("点击【我知道了】按钮") {
                 //android.widget.Button → 我知道了 → com.tencent.mm:id/guw
-                wxAccessibilityService.clickByText(NodeInfo.RemittanceDialogConfirmNode.nodeText)
+                wxAccessibilityService.clickByText(Nodes.remittanceDialogConfirmNode.nodeText)
             }
         }
     }

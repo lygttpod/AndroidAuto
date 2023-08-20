@@ -2,22 +2,22 @@ package com.android.wechat.tools.page
 
 import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.service.WXAccessibility
 import com.android.wechat.tools.service.wxAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 import kotlinx.coroutines.delay
 
 object WXHomePage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        HomeBottomNavNode("", "com.tencent.mm:id/fj3", "首页底导布局"),
-        BottomNavContactsTabNode("通讯录", "com.tencent.mm:id/f2s", "首页底导【通讯录】tab"),
-        BottomNavMineTabNode("我", "com.tencent.mm:id/f2s", "首页底导【我】tab"),
-        HomeRightTopPlusNode("", "com.tencent.mm:id/grs", "首页右上角【加号】按钮"),
-        CreateGroupNode(
-            "发起群聊",
-            "com.tencent.mm:id/knx",
-            "点击首页右上角【加号】按钮后弹框中的【发起群聊】按钮"
-        ),
+    interface Nodes {
+        val homeBottomNavNode: NodeInfo
+        val bottomNavContactsTabNode: NodeInfo
+        val bottomNavMineTabNode: NodeInfo
+        val homeRightTopPlusNode: NodeInfo
+        val createGroupNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = "com.tencent.mm.ui.LauncherUI"
@@ -29,7 +29,7 @@ object WXHomePage : IPage {
      * 找到这个节点就可以说明当前在微信首页
      */
     override fun isMe(): Boolean {
-        return wxAccessibilityService?.findById(NodeInfo.HomeBottomNavNode.nodeId) != null
+        return wxAccessibilityService?.findById(Nodes.homeBottomNavNode.nodeId) != null
     }
 
     /**
@@ -70,14 +70,14 @@ object WXHomePage : IPage {
             retryCheckTaskWithLog("点击【通讯录】tab") {
                 if (doubleClick) {
                     wxAccessibilityService?.findByIdAndText(
-                        NodeInfo.BottomNavContactsTabNode.nodeId,
-                        NodeInfo.BottomNavContactsTabNode.nodeText
+                        Nodes.bottomNavContactsTabNode.nodeId,
+                        Nodes.bottomNavContactsTabNode.nodeText
                     ).click()
                     delay(300)
                 }
                 wxAccessibilityService?.findByIdAndText(
-                    NodeInfo.BottomNavContactsTabNode.nodeId,
-                    NodeInfo.BottomNavContactsTabNode.nodeText
+                    Nodes.bottomNavContactsTabNode.nodeId,
+                    Nodes.bottomNavContactsTabNode.nodeText
                 ).click()
             }
         }
@@ -90,8 +90,8 @@ object WXHomePage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【我的】tab") {
                 wxAccessibilityService?.findByIdAndText(
-                    NodeInfo.BottomNavMineTabNode.nodeId,
-                    NodeInfo.BottomNavMineTabNode.nodeText
+                    Nodes.bottomNavMineTabNode.nodeId,
+                    Nodes.bottomNavMineTabNode.nodeText
                 ).click()
             }
         }
@@ -104,7 +104,7 @@ object WXHomePage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击首页右上角的【＋】按钮") {
                 //android.widget.RelativeLayout → text =  → id = com.tencent.mm:id/grs → description = 更多功能按钮
-                wxAccessibilityService.clickById(NodeInfo.HomeRightTopPlusNode.nodeId)
+                wxAccessibilityService.clickById(Nodes.homeRightTopPlusNode.nodeId)
 //                wxAccessibilityService?.findById("com.tencent.mm:id/grs")?.click() == true
             }
         }
@@ -117,7 +117,7 @@ object WXHomePage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【发起群聊】按钮") {
                 //android.widget.TextView → text = 发起群聊 → id = com.tencent.mm:id/knx
-                wxAccessibilityService.clickById(NodeInfo.CreateGroupNode.nodeId)
+                wxAccessibilityService.clickById(Nodes.createGroupNode.nodeId)
 //                wxAccessibilityService?.findById("com.tencent.mm:id/knx")?.click() == true
             }
         }

@@ -7,19 +7,23 @@ import com.android.accessibility.ext.acc.findChildNodes
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.data.WxUserInfo
 import com.android.wechat.tools.em.FriendStatus
 import com.android.wechat.tools.page.IPage
 import com.android.wechat.tools.service.wxAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 
 
 object WXGroupChatPage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        GroupChatPageTitleNode("群聊(x)", "com.tencent.mm:id/ko4", "新建的群聊页面"),
-        GroupChatContentListNode("", "com.tencent.mm:id/b79", "群聊内容列表-RecyclerView"),
-        GroupChatMsgNode("", "com.tencent.mm:id/b4b", "群聊消息内容"),
-        GroupChatRightTopNode("", "com.tencent.mm:id/eo", "群聊页右上角按钮"),
+    interface Nodes {
+        val groupChatPageTitleNode: NodeInfo
+        val groupChatContentListNode: NodeInfo
+        val groupChatMsgNode: NodeInfo
+        val groupChatRightTopNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = "群聊页"
@@ -28,7 +32,7 @@ object WXGroupChatPage : IPage {
 
     override fun isMe(): Boolean {
         //android.widget.TextView → text = 群聊(3) → id = com.tencent.mm:id/ko4
-        return wxAccessibilityService?.findById(NodeInfo.GroupChatPageTitleNode.nodeId) != null
+        return wxAccessibilityService?.findById(Nodes.groupChatPageTitleNode.nodeId) != null
     }
 
     suspend fun inPage(): Boolean {
@@ -39,10 +43,11 @@ object WXGroupChatPage : IPage {
 
     private fun showContent(): Boolean {
         return wxAccessibilityService.findChildNodes(
-            NodeInfo.GroupChatContentListNode.nodeId,
-            NodeInfo.GroupChatMsgNode.nodeId
+            Nodes.groupChatContentListNode.nodeId,
+            Nodes.groupChatMsgNode.nodeId
         ).isNotEmpty()
     }
+
     /**
      * 检测当前群聊里用户的状态
      */
@@ -58,8 +63,8 @@ object WXGroupChatPage : IPage {
 
                 val list = mutableListOf<WxUserInfo>()
                 wxAccessibilityService.findChildNodes(
-                    NodeInfo.GroupChatContentListNode.nodeId,
-                    NodeInfo.GroupChatMsgNode.nodeId
+                    Nodes.groupChatContentListNode.nodeId,
+                    Nodes.groupChatMsgNode.nodeId
                 ).forEach {
                     val resultText = it.text.default()
                     val result = when {
@@ -147,7 +152,7 @@ object WXGroupChatPage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【群聊页右上角】按钮") {
                 //android.widget.ImageView → text =  → id = com.tencent.mm:id/eo → description = 聊天信息
-                wxAccessibilityService?.findById(NodeInfo.GroupChatRightTopNode.nodeId).click()
+                wxAccessibilityService?.findById(Nodes.groupChatRightTopNode.nodeId).click()
             }
         }
     }

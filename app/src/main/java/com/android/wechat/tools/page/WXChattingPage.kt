@@ -1,14 +1,21 @@
 package com.android.wechat.tools.page
 
-import com.android.accessibility.ext.acc.*
+import com.android.accessibility.ext.acc.clickById
+import com.android.accessibility.ext.acc.findById
+import com.android.accessibility.ext.acc.findByIdAndText
+import com.android.accessibility.ext.acc.gestureClick
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.service.wxAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 
 object WXChattingPage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        ChattingBottomPlusNode("", "com.tencent.mm:id/b3q", "聊天页底部的【+】按钮"),
-        ChattingTransferMoneyNode("转账", "com.tencent.mm:id/vg", "聊天页底部功能区的【转账】按钮")
+    interface Nodes {
+        val chattingBottomPlusNode: NodeInfo
+        val chattingTransferMoneyNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = "com.tencent.mm.ui.chatting.ChattingUI"
@@ -16,7 +23,7 @@ object WXChattingPage : IPage {
     override fun pageTitleName() = "微信聊天页"
 
     override fun isMe(): Boolean {
-        return wxAccessibilityService?.findById(NodeInfo.ChattingBottomPlusNode.nodeId) != null
+        return wxAccessibilityService?.findById(Nodes.chattingBottomPlusNode.nodeId) != null
     }
 
     suspend fun checkInPage(): Boolean {
@@ -33,7 +40,7 @@ object WXChattingPage : IPage {
     suspend fun clickMoreOption(): Boolean {
         return delayAction(delayMillis = 1000) {
             retryCheckTaskWithLog("点击聊天页的功能区【+】按钮") {
-                wxAccessibilityService.clickById(NodeInfo.ChattingBottomPlusNode.nodeId)
+                wxAccessibilityService.clickById(Nodes.chattingBottomPlusNode.nodeId)
             }
         }
     }
@@ -47,8 +54,8 @@ object WXChattingPage : IPage {
 //                wxAccessibilityService?.printNodeInfo()
 //                wxAccessibilityService.findWithClickByText("转账")
                 val find = wxAccessibilityService?.findByIdAndText(
-                    NodeInfo.ChattingTransferMoneyNode.nodeId,
-                    NodeInfo.ChattingTransferMoneyNode.nodeText
+                    Nodes.chattingTransferMoneyNode.nodeId,
+                    Nodes.chattingTransferMoneyNode.nodeText
                 )
                 if (find == null) {
                     false

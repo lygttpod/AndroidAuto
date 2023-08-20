@@ -5,18 +5,22 @@ import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.task.retryTaskWithLog
+import com.android.wechat.tools.data.NodeInfo
 import com.android.wechat.tools.service.wxHbAccessibilityService
+import com.android.wechat.tools.version.nodeProxy
 
 object WXHBPage : IPage {
 
-    enum class NodeInfo(val nodeText: String, val nodeId: String, val des: String) {
-        ChatPageTitleNode("", "com.tencent.mm:id/ko4", "聊天页面"),
-        HBPatentNode("", "com.tencent.mm:id/ape", "红包父布局"),
-        HBReceiveNode("", "com.tencent.mm:id/xs", "红包【已领取】"),
-        HBOpenNode("", "com.tencent.mm:id/gir", "【开】红包"),
-        HBBackNode("", "com.tencent.mm:id/k6i", "从红包领取页【返回】"),
-        HBSenderNode("", "com.tencent.mm:id/ge3", "红包详情页的xxx的红包"),
-        HBNumNode("", "com.tencent.mm:id/gcj", "红包详情页中抢到的红包金额"),
+    interface Nodes {
+        val chatPageTitleNode: NodeInfo
+        val hbPatentNode: NodeInfo
+        val hbReceiveNode: NodeInfo
+        val hbOpenNode: NodeInfo
+        val hbBackNode: NodeInfo
+        val hbSenderNode: NodeInfo
+        val hbNumNode: NodeInfo
+
+        companion object : Nodes by nodeProxy()
     }
 
     override fun pageClassName() = ""
@@ -24,7 +28,7 @@ object WXHBPage : IPage {
     override fun pageTitleName() = "微信抢红包"
 
     override fun isMe(): Boolean {
-        return wxHbAccessibilityService?.findById(NodeInfo.ChatPageTitleNode.nodeId) != null
+        return wxHbAccessibilityService?.findById(Nodes.chatPageTitleNode.nodeId) != null
     }
 
     private suspend fun inPage() = retryCheckTaskWithLog("判断是否在聊天页面") { isMe() }
@@ -37,9 +41,9 @@ object WXHBPage : IPage {
 
     private fun findHBNodes(): List<AccessibilityNodeInfo> {
         return wxHbAccessibilityService
-            .findNodesById(NodeInfo.HBPatentNode.nodeId)
+            .findNodesById(Nodes.hbPatentNode.nodeId)
             .filter {
-                it.findNodeById(NodeInfo.HBReceiveNode.nodeId) == null
+                it.findNodeById(Nodes.hbReceiveNode.nodeId) == null
             }
     }
 
@@ -62,14 +66,14 @@ object WXHBPage : IPage {
 
     private suspend fun clickOpenHb(): Boolean {
         return retryCheckTaskWithLog("点击开红包") {
-            wxHbAccessibilityService.clickById(NodeInfo.HBOpenNode.nodeId)
+            wxHbAccessibilityService.clickById(Nodes.hbOpenNode.nodeId)
         }
     }
 
     private suspend fun inHbDetails(): Boolean {
         return delayAction {
             retryCheckTaskWithLog("判断当前是否在红包详情页") {
-                wxHbAccessibilityService?.findById(NodeInfo.HBSenderNode.nodeId) != null
+                wxHbAccessibilityService?.findById(Nodes.hbSenderNode.nodeId) != null
             }
         }
     }
@@ -77,9 +81,9 @@ object WXHBPage : IPage {
     private suspend fun getHbInfo(): String? {
         return retryTaskWithLog("获取红包信息") {
             val hbSender =
-                wxHbAccessibilityService?.findById(NodeInfo.HBSenderNode.nodeId)?.text.default()
+                wxHbAccessibilityService?.findById(Nodes.hbSenderNode.nodeId)?.text.default()
             val getHbNum =
-                wxHbAccessibilityService?.findById(NodeInfo.HBNumNode.nodeId)?.text.default()
+                wxHbAccessibilityService?.findById(Nodes.hbNumNode.nodeId)?.text.default()
 
             "${hbSender}，抢到：$getHbNum 元"
         }
@@ -88,7 +92,7 @@ object WXHBPage : IPage {
     private suspend fun backFromHBDetail(hbInfo: String?): Boolean {
         return delayAction {
             retryCheckTaskWithLog("$hbInfo  点击返回") {
-                wxHbAccessibilityService.clickById(NodeInfo.HBBackNode.nodeId)
+                wxHbAccessibilityService.clickById(Nodes.hbBackNode.nodeId)
             }
         }
     }
