@@ -19,8 +19,15 @@ object WXHBPage : IPage {
         val hbBackNode: NodeInfo
         val hbSenderNode: NodeInfo
         val hbNumNode: NodeInfo
+        val hbMissNode: NodeInfo
 
         companion object : Nodes by nodeProxy()
+    }
+
+    enum class HBStatus {
+        ENABLE,//可抢
+        MISS,//错失
+        UNKNOW//未知
     }
 
     override fun pageClassName() = ""
@@ -52,16 +59,44 @@ object WXHBPage : IPage {
         if (!inPage) return
         val click = clickHb(nodeInfo)
         if (!click) return
-        val open = clickOpenHb()
-        if (!open) return
-        val inHbDetails = inHbDetails()
-        if (!inHbDetails) return
-        val hbInfo = getHbInfo()
-        backFromHBDetail(hbInfo)
+        when(checkClickStatus()) {
+            HBStatus.ENABLE -> {
+                val open = clickOpenHb()
+                if (!open) return
+                val inHbDetails = inHbDetails()
+                if (!inHbDetails) return
+                val hbInfo = getHbInfo()
+                backFromHBDetail(hbInfo)
+            }
+            HBStatus.MISS -> {
+                clickCloseMissHb()
+            }
+            else -> {}
+        }
     }
 
     private suspend fun clickHb(nodeInfo: AccessibilityNodeInfo): Boolean {
         return retryCheckTaskWithLog("点击红包") { nodeInfo.click() }
+    }
+
+    private suspend fun checkClickStatus(): HBStatus {
+        //1、可能被抢完了
+        //2、可以正常抢
+        return retryTaskWithLog("检查点击红包状态") {
+            val miss = wxHbAccessibilityService.clickById(Nodes.hbMissNode.nodeId)
+            val canOpen = wxHbAccessibilityService.clickById(Nodes.hbOpenNode.nodeId)
+            when{
+                miss -> HBStatus.MISS
+                canOpen -> HBStatus.ENABLE
+                else -> null
+            }
+        } ?: HBStatus.UNKNOW
+    }
+
+    private suspend fun clickCloseMissHb(): Boolean {
+        return retryCheckTaskWithLog("点击关闭错失的红包") {
+            wxHbAccessibilityService.clickById(Nodes.hbMissNode.nodeId)
+        }
     }
 
     private suspend fun clickOpenHb(): Boolean {

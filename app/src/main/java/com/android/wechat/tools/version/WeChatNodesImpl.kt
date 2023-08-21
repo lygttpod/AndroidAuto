@@ -86,6 +86,7 @@ enum class WeChatNodesImpl(val version: String) :
         override val hbBackNode = NodeInfo("", "com.tencent.mm:id/k6i", "从红包领取页【返回】")
         override val hbSenderNode = NodeInfo("", "com.tencent.mm:id/ge3", "红包详情页的xxx的红包")
         override val hbNumNode = NodeInfo("", "com.tencent.mm:id/gcj", "红包详情页中抢到的红包金额")
+        override val hbMissNode = NodeInfo("", "com.tencent.mm:id/gip", "关闭被抢完的红包弹框")
 
 
         //群聊发起页
