@@ -1,11 +1,5 @@
 <resources>
-    <string name="app_name">WeChatTools</string>
-    <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
-    <string name="main_fragment_label">微信自动化工具</string>
+    <string name="app_name">Android自动化</string>
+    <string name="main_fragment_label">Android自动化工具</string>
 
-    <string name="wx_tools_label">微信好友关系检测</string>
-    <string name="wx_tools_des">自动化检测好友关系，甄别是否被好友 拉黑、删除，或者好友账号异常等状态，检测过程不涉不会保存个人信息，请放心使用</string>
-    <string name="wx_hb_tools_label">微信自动抢红包</string>
-    <string name="wx_hb_tools_des">微信自动抢红包，需要使用的时候打开，不使用的时候建议关闭</string>
 </resources>

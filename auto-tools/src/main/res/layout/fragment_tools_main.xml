@@ -1,37 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    tools:context="com.lygttpod.android.auto.MainFragment">
+    android:padding="20dp">
 
     <Button
-        android:id="@+id/btn_print_tools"
+        android:id="@+id/btn_open_service"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="页面元素检测工具"
+        android:layout_marginTop="10dp"
+        android:text="打开无障碍【页面节点速查】服务"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_wx_auto"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="微信自动化"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_print_tools" />
 
     <Button
+        android:id="@+id/btn_node_print"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:enabled="false"
-        android:text="more comming"
-        android:textAllCaps="false"
+        android:text="页面节点速查器"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto" />
+        app:layout_constraintTop_toBottomOf="@id/btn_open_service" />
+
+    <TextView
+        android:id="@+id/tv_ip_address"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_node_print" />
+
+    <TextView
+        android:id="@+id/btn_tools_des"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/tools_des"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_ip_address" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

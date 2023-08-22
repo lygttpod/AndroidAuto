@@ -20,7 +20,7 @@ fun Context.openAccessibilitySetting() {
 }
 
 fun Context.isAccessibilityOpened(serviceClass: Class<out AccessibilityService>): Boolean {
-    val serviceName: String = this.packageName + "/" + serviceClass.canonicalName
+    val serviceName: String = this.applicationContext.packageName + "/" + serviceClass.canonicalName
     var accessibilityEnabled = 0
     try {
         accessibilityEnabled =

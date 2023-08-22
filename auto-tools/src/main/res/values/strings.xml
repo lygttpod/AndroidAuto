@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="tools_main_fragment_label">布局节点速查器</string>
+
+    <string name="tools_label">【布局节点速查器】</string>
+    <string name="tools_des">使用说明：\n1、打开无障碍服务；\n2、开启悬浮窗权限；\n3、点击速查器按钮</string>
+</resources>

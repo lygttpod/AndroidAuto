@@ -16,3 +16,5 @@ dependencyResolutionManagement {
 rootProject.name = "WeChatTools"
 include ':app'
 include ':accessibility'
+include ':auto-wx'
+include ':auto-tools'

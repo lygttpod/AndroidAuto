@@ -7,10 +7,4 @@
     <color name="teal_700">#FF6200EE</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
-    <color name="friend_delete">#CD0000</color>
-    <color name="friend_black">#CD2990</color>
-    <color name="friend_exc">#CD4F39</color>
-    <color name="friend_unknow">#FF6200EE</color>
-    <color name="friend_normal">#FF000000</color>
 </resources>
