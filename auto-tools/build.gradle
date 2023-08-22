@@ -42,4 +42,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.github.lygttpod:ShapeView:1.0.2'
     implementation 'com.github.getActivity:EasyWindow:10.3'
+    implementation 'io.github.lygttpod.android-local-service:core:0.0.1'
+    implementation 'io.github.lygttpod.android-local-service:annotation:0.0.1'
+    kapt 'io.github.lygttpod.android-local-service:processor:0.0.1'
 }

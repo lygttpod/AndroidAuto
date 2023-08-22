@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp">
@@ -20,7 +21,7 @@
         android:id="@+id/btn_node_print"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="页面节点速查器"
+        android:text="页面节点速查器【悬浮窗】"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_open_service" />
@@ -30,12 +31,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:padding="10dp"
+        android:textColor="#ff3333"
+        android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_node_print" />
+        app:layout_constraintTop_toBottomOf="@id/btn_node_print"
+        tools:text="192.168.1.1:8080/index" />
 
     <TextView
-        android:id="@+id/btn_tools_des"
+        android:id="@+id/tv_tools_des"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/tools_des"
@@ -44,4 +49,23 @@
         app:layout_constraintTop_toBottomOf="@id/tv_ip_address" />
 
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_ip_address">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </HorizontalScrollView>
+
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

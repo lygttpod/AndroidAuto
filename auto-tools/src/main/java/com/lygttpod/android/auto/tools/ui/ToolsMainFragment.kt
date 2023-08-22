@@ -8,9 +8,14 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import com.android.accessibility.ext.isAccessibilityOpened
 import com.android.accessibility.ext.openAccessibilitySetting
+import com.android.local.service.core.ALSHelper
+import com.android.local.service.core.data.ServiceConfig
 import com.lygttpod.android.auto.tools.accessibility.AutoToolsAccessibility
 import com.lygttpod.android.auto.tools.databinding.FragmentToolsMainBinding
+import com.lygttpod.android.auto.tools.ktx.getPhoneWifiIpAddress
 import com.lygttpod.android.auto.tools.ktx.showPrintFloat
+import com.lygttpod.android.auto.tools.manager.ContentManger
+import com.lygttpod.android.auto.tools.service.AutoToolsService
 
 
 class ToolsMainFragment : Fragment() {
@@ -36,6 +41,13 @@ class ToolsMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initListener()
         initObserver()
+        initALS()
+        "${getPhoneWifiIpAddress()}:${ALSHelper.serviceList.firstOrNull()?.port}/index".also { binding.tvIpAddress.text = it }
+    }
+
+    private fun initALS() {
+        ALSHelper.init(requireContext().applicationContext)
+        ALSHelper.startService(ServiceConfig(AutoToolsService::class.java))
     }
 
     override fun onResume() {
@@ -50,6 +62,12 @@ class ToolsMainFragment : Fragment() {
             binding.btnOpenService.text =
                 if (open) "【页面节点速查】服务已开启" else "点击打开【页面节点速查】服务"
             binding.tvIpAddress.visibility = if (open) View.VISIBLE else View.GONE
+        }
+
+        ContentManger.printContentLiveData.observe(viewLifecycleOwner) {
+            val content = it ?: ""
+            binding.tvToolsDes.visibility = if (content.isBlank()) View.VISIBLE else View.GONE
+            binding.tvContent.text = content
         }
     }
 

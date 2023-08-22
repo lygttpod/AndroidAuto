@@ -3,5 +3,16 @@
     <string name="tools_main_fragment_label">布局节点速查器</string>
 
     <string name="tools_label">【布局节点速查器】</string>
-    <string name="tools_des">使用说明：\n1、打开无障碍服务；\n2、开启悬浮窗权限；\n3、点击速查器按钮</string>
+    <string name="tools_introduce">使用说明</string>
+    <string name="tools_des">在无障碍服务中找到【布局节点速查器】并开启；\n\n
+        APP中查看节点信息:\n\n
+            开启悬浮窗权限\n
+            点击【页面节点速查器】按钮显示出悬浮窗\n
+            点击悬浮窗按钮\n
+            回到APP中即可查看\n\n
+        电脑端浏览器中查看节点信息:\n\n
+            确保手机端和电脑端在一个局域网内\n
+            电脑浏览器中输入页面提示的IP地址\n
+            点击输入IP地址显示的网页上的按钮即可查看\n
+    </string>
 </resources>

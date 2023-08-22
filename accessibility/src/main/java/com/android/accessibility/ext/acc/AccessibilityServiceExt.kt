@@ -125,9 +125,9 @@ suspend fun AccessibilityService?.scrollToFindByText(
     }
 }
 
-fun AccessibilityService?.printNodeInfo(): String {
+fun AccessibilityService?.printNodeInfo(simplePrint: Boolean = true): String {
     this ?: return ""
-    return rootInActiveWindow.printNodeInfo()
+    return rootInActiveWindow.printNodeInfo(simplePrint = simplePrint)
 }
 
 fun AccessibilityService.clickByIdAndText(

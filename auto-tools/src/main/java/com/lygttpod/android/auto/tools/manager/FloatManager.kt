@@ -11,6 +11,7 @@ import com.lygttpod.android.auto.tools.accessibility.AutoToolsAccessibility.Comp
 import com.lygttpod.android.auto.tools.R
 import com.lygttpod.android.auto.tools.manager.ContentManger.printContent
 import com.lygttpod.android.auto.tools.ktx.canDrawOverlays
+import com.lygttpod.android.auto.tools.manager.ContentManger.printContentLiveData
 
 object FloatManager {
 
@@ -36,7 +37,8 @@ object FloatManager {
                 ) { window, view ->
                     if (context.isAccessibilityOpened(AutoToolsAccessibility::class.java)) {
                         printContent = autoToolsAccessibility?.printNodeInfo()
-                        context.toast("请在AS控制台查看当前页面布局信息")
+                        printContentLiveData.value = printContent
+                        context.toast("成功获取页面元素")
                     } else {
                         context.toast("请先开启无障碍服务")
                     }

@@ -15,5 +15,30 @@ data class NodeWrapper(
     var isEditable: Boolean = false,
     var nodeInfo: AccessibilityNodeInfo? = null
 ) {
-    override fun toString() = "className = $className → text = $text → id = $id → description = $description → isClickable = $isClickable → isScrollable = $isScrollable → isEditable = $isEditable"
+    override fun toString() =
+        "className = $className → text = $text → id = $id → description = $description → isClickable = $isClickable → isScrollable = $isScrollable → isEditable = $isEditable"
+
+    fun toSimpleString(): String {
+        val ss = StringBuilder()
+        ss.append("className = $className")
+        if (text.isNullOrBlank().not()) {
+            ss.append(" → text = $text")
+        }
+        if (id.isNullOrBlank().not()) {
+            ss.append(" → id = $id")
+        }
+        if (description.isNullOrBlank().not()) {
+            ss.append(" → description = $description")
+        }
+        if (isClickable) {
+            ss.append(" → isClickable = $isClickable")
+        }
+        if (isScrollable) {
+            ss.append(" → isScrollable = $isScrollable")
+        }
+        if (isEditable) {
+            ss.append(" → isEditable = $isEditable")
+        }
+        return ss.toString()
+    }
 }

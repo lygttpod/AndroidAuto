@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>页面元素速查器</title>
+    <!-- 引入 Bootstrap 的 CSS 文件 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* 添加自定义样式 */
+        #output {
+            margin-top: 60px; /* 为内容留出按钮的高度 */
+            text-align: left;
+            overflow: auto;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+        #output pre {
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        /* 添加 Bootstrap 样式类 */
+        #buttonContainer {
+            position: fixed; /* 将按钮固定在页面上 */
+            top: 0; /* 按钮在页面顶部 */
+            left: 0;
+            width: 100%;
+            background-color: white;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #button1 {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="buttonContainer">
+    <!-- 使用 Bootstrap 样式的按钮 -->
+    <button id="btn_get_page_node" class="btn btn-primary">获取手机当前窗口页面元素</button>
+    <button id="btn_get_page_simple_node" class="btn btn-primary">获取手机当前窗口页面元素(精简数据)</button>
+</div>
+<div id="output"><pre></pre></div>
+
+<script>
+        document.getElementById("btn_get_page_node").addEventListener("click", function() {
+            fetch("/getPageNodeInfo")
+                .then(response => response.json())
+                .then(result => {
+                        if (result.code === 200) {
+                            if (result.data.includes("\n")) { // 判断是否包含换行符
+                                const lines = result.data.split("\n"); // 按换行符分割内容为行
+                                const formattedLines = lines.map(line => line.trim()); // 去除行首尾空格
+                                const formattedData = formattedLines.join("\n"); // 将行拼接为字符串
+                                document.querySelector("#output pre").innerText = formattedData;
+                            } else {
+                                document.querySelector("#output pre").innerText = result.data; // 直接输出result.data
+                            }
+                        } else {
+                            document.querySelector("#output pre").innerText = "Error: " + data.message;
+                        }
+
+                })
+                .catch(error => {
+                    document.querySelector("#output pre").innerText = "An error occurred: " + error.message;
+                });
+        });
+
+        document.getElementById("btn_get_page_simple_node").addEventListener("click", function() {
+            fetch("/getPageSimpleNodeInfo")
+                .then(response => response.json())
+                .then(result => {
+                        if (result.code === 200) {
+                            if (result.data.includes("\n")) { // 判断是否包含换行符
+                                const lines = result.data.split("\n"); // 按换行符分割内容为行
+                                const formattedLines = lines.map(line => line.trim()); // 去除行首尾空格
+                                const formattedData = formattedLines.join("\n"); // 将行拼接为字符串
+                                document.querySelector("#output pre").innerText = formattedData;
+                            } else {
+                                document.querySelector("#output pre").innerText = result.data; // 直接输出result.data
+                            }
+                        } else {
+                            document.querySelector("#output pre").innerText = "Error: " + data.message;
+                        }
+
+                })
+                .catch(error => {
+                    document.querySelector("#output pre").innerText = "An error occurred: " + error.message;
+                });
+        });
+
+    </script>
+</body>
+</html>
