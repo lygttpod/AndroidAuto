@@ -39,7 +39,10 @@ object WXContactPage : IPage {
     }
 
     private fun isShowUserList(): Boolean {
-        return wxAccessibilityService?.findById(Nodes.contactUserNode.nodeId) != null
+        return wxAccessibilityService?.findChildNodes(
+            Nodes.contactListNode.nodeId,
+            Nodes.contactUserNode.nodeId
+        )?.isNotEmpty() ?: false
     }
 
     /**
