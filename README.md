@@ -1,7 +1,7 @@
 # WeChatTools
-微信自动化工具
+Android自动化工具
 
-### [下载demo](https://github.com/lygttpod/WeChatTools/tree/main/demo/app-debug.apk)体验
+### [下载demo](https://www.pgyer.com/androidAuto)体验
 
 ### 相关文章介绍（按顺序发布）
 
