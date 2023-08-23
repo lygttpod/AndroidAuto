@@ -130,11 +130,12 @@ fun AccessibilityService?.printNodeInfo(simplePrint: Boolean = true): String {
     return rootInActiveWindow.printNodeInfo(simplePrint = simplePrint)
 }
 
-fun AccessibilityService.clickByIdAndText(
+fun AccessibilityService?.clickByIdAndText(
     id: String,
     text: String
 ): Boolean {
-    rootInActiveWindow.findNodesById(id).firstOrNull { it.text == text }?.let {
+    this ?: return false
+    rootInActiveWindow.findNodesById(id).firstOrNull { it.text.default() == text }?.let {
         gestureClick(it)
         return true
     }
@@ -180,12 +181,14 @@ fun AccessibilityService.gestureClick(node: AccessibilityNodeInfo) {
  * @param distance: 需要滑动的距离，像素值 负值：向下滚动，正直：向上滚动
  * @param scrollDuration: 需要滑动时长
  * @param node: 需要滑动的节点
+ * @param isVerticalDirection: 滚动方向，默认上下滑动，false 左右滑动
  * */
 private fun AccessibilityService.gestureScroll(
     node: AccessibilityNodeInfo,
     distance: Int,
-    scrollDuration: Long = 300
-) {
+    scrollDuration: Long = 300,
+    isVerticalDirection: Boolean = true
+): Boolean {
     val nodeBounds = Rect().apply(node::getBoundsInScreen)
     val x = nodeBounds.centerX().toFloat()
     val y = nodeBounds.centerY().toFloat()
@@ -195,10 +198,13 @@ private fun AccessibilityService.gestureScroll(
                 GestureDescription.StrokeDescription(
                     Path().apply {
                         moveTo(x, y)
-                        lineTo(x, y + distance)
+                        lineTo(
+                            if (isVerticalDirection) x else x + distance,
+                            if (isVerticalDirection) y + distance else y
+                        )
                     },
                     0L,
-                    scrollDuration
+                    if (scrollDuration <= 0) 300 else scrollDuration
                 )
             )
         }.build(),
@@ -209,30 +215,56 @@ private fun AccessibilityService.gestureScroll(
         },
         null
     )
+    return true
 }
 
 /**
  * 向上滚动
  */
-fun AccessibilityService.scrollForward(
+fun AccessibilityService?.scrollUp(
     distance: Int = 500,
     scrollDuration: Long = 300,
     node: AccessibilityNodeInfo
-) {
-    gestureScroll(node, abs(distance), scrollDuration)
+): Boolean {
+    this ?: return false
+    return gestureScroll(node, -abs(if (distance <= 0) 500 else distance), scrollDuration)
 }
 
 /**
  * 向下滚动
  */
-fun AccessibilityService.scrollBackward(
+fun AccessibilityService?.scrollDown(
     distance: Int = 500,
     scrollDuration: Long = 300,
     node: AccessibilityNodeInfo
-) {
-    gestureScroll(node, -abs(distance), scrollDuration)
+): Boolean {
+    this ?: return false
+    return gestureScroll(node, abs(if (distance <= 0) 500 else distance), scrollDuration)
 }
 
+/**
+ * 向左滑动
+ */
+fun AccessibilityService?.scrollLeft(
+    distance: Int = 500,
+    scrollDuration: Long = 300,
+    node: AccessibilityNodeInfo
+): Boolean {
+    this ?: return false
+    return gestureScroll(node, -abs(if (distance <= 0) 500 else distance), scrollDuration, false)
+}
+
+/**
+ * 向右滑动
+ */
+fun AccessibilityService?.scrollRight(
+    distance: Int = 500,
+    scrollDuration: Long = 300,
+    node: AccessibilityNodeInfo
+): Boolean {
+    this ?: return false
+    return gestureScroll(node, abs(if (distance <= 0) 500 else distance), scrollDuration, false)
+}
 
 suspend fun AccessibilityService?.findAllChildByScroll(
     parentViewId: String,
