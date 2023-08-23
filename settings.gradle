@@ -13,7 +13,7 @@ dependencyResolutionManagement {
         maven { url 'https://jitpack.io' }
     }
 }
-rootProject.name = "WeChatTools"
+rootProject.name = "AndroidAuto"
 include ':app'
 include ':accessibility'
 include ':auto-wx'
