@@ -189,33 +189,38 @@ private fun AccessibilityService.gestureScroll(
     scrollDuration: Long = 300,
     isVerticalDirection: Boolean = true
 ): Boolean {
-    val nodeBounds = Rect().apply(node::getBoundsInScreen)
-    val x = nodeBounds.centerX().toFloat()
-    val y = nodeBounds.centerY().toFloat()
-    dispatchGesture(
-        GestureDescription.Builder().apply {
-            addStroke(
-                GestureDescription.StrokeDescription(
-                    Path().apply {
-                        moveTo(x, y)
-                        lineTo(
-                            if (isVerticalDirection) x else x + distance,
-                            if (isVerticalDirection) y + distance else y
-                        )
-                    },
-                    0L,
-                    if (scrollDuration <= 0) 300 else scrollDuration
+    try {
+        val nodeBounds = Rect().apply(node::getBoundsInScreen)
+        val x = nodeBounds.centerX().toFloat()
+        val y = nodeBounds.centerY().toFloat()
+        dispatchGesture(
+            GestureDescription.Builder().apply {
+                addStroke(
+                    GestureDescription.StrokeDescription(
+                        Path().apply {
+                            moveTo(x, y)
+                            lineTo(
+                                if (isVerticalDirection) x else x + distance,
+                                if (isVerticalDirection) y + distance else y
+                            )
+                        },
+                        0L,
+                        if (scrollDuration <= 0) 300 else scrollDuration
+                    )
                 )
-            )
-        }.build(),
-        object : AccessibilityService.GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                super.onCompleted(gestureDescription)
-            }
-        },
-        null
-    )
-    return true
+            }.build(),
+            object : AccessibilityService.GestureResultCallback() {
+                override fun onCompleted(gestureDescription: GestureDescription?) {
+                    super.onCompleted(gestureDescription)
+                }
+            },
+            null
+        )
+        return true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
 }
 
 /**

@@ -38,8 +38,13 @@
             /* 为内容留出按钮的高度 */
             text-align: left;
             overflow: auto;
+            margin-left: 0px;
             padding: 20px;
             transition: margin-left 0.3s;
+        }
+
+        #contentRoot.active {
+            margin-left: 250px;
         }
 
         #sidebar {
@@ -64,7 +69,7 @@
             position: relative;
             width: 200px;
             height: 200px;
-            margin: 30px auto;
+            margin: 10px auto;
             border-radius: 50%;
             background-color: #ffffff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
@@ -142,17 +147,32 @@
         .clickTip {
             padding: 10px;
             font-size: 14px;
-            color: #190cd8;
+            color: #ee1212;
             margin-bottom: 20px;
+            opacity: 0.5;
         }
     </style>
     <script>
         $(document).ready(function() {
 
-            function fetchAndHandleData(url, successCallback, errorCallback) {
+            function showLoading() {
+                const loading = document.getElementById("loading");
+                loading.style.display = "inline-block";
+            }
+
+            function hideLoading() {
+                const loading = document.getElementById("loading");
+                loading.style.display = "none";
+            }
+
+            function fetchAndHandleData(url, isShowLoading, successCallback, errorCallback) {
+                if (isShowLoading) {
+                    showLoading();
+                }
                 fetch(url)
                     .then(response => response.json())
                     .then(result => {
+                        hideLoading();
                         if (result.code === 200) {
                             if (successCallback) {
                                 successCallback(result.data);
@@ -164,37 +184,26 @@
                         }
                     })
                     .catch(error => {
+                        hideLoading();
                         if (errorCallback) {
                             errorCallback("An error occurred: " + error.message);
                         }
                     });
             }
 
-            function clickBtnWithRequest(btnId, url, successCallback, errorCallback) {
-                $("#" + btnId).on("click", function() {
-                    fetchAndHandleData(url, successCallback, errorCallback);
-                });
-            };
-
-            function clickAction(btnId, url) {
-                clickBtnWithRequest(btnId, url, function(data) {
-
+            function nodeAction(url) {
+                fetchAndHandleData(url, false, function(data) {
+                        if (!data) {
+                            alert("操作失败");
+                        }
                     },
                     function(errorMessage) {
                         alert(errorMessage);
                     });
             }
 
-
-            $("#btn_menu").on("click", function() {
-                const sidebar = document.getElementById("sidebar");
-                const content = document.getElementById("contentRoot");
-                sidebar.classList.toggle("active");
-                content.classList.toggle("active");
-            });
-
             function getNodeData(url) {
-                fetchAndHandleData(url, function(data) {
+                fetchAndHandleData(url, true, function(data) {
                         if (data.includes("\n")) { // 判断是否包含换行符
                             const lines = data.split("\n"); // 按换行符分割内容为行
                             const formattedLines = lines.map(line => line.trim()); // 去除行首尾空格
@@ -209,50 +218,33 @@
                     });
             }
 
-            function nodeAction(url) {
-                fetchAndHandleData(url, function(data) {
-                        if (!data) {
-                            alert("操作异常");
-                        }
-                    },
-                    function(errorMessage) {
-                        alert(errorMessage);
-                    });
-            }
-
             function isNotEmpty(str) {
                 return str != null && str != undefined && str.length > 0;
             }
 
-            function getScrollPath(path) {
-                var distance = $("#scrollDistance").val();
-                var duration = $("#scrollDuration").val();
-                var realPath = path;
-                if (isNotEmpty(distance)) {
-                    realPath += "?distance=" + distance;
-                }
-                if (isNotEmpty(duration)) {
-                    realPath += "&duration=" + duration;
-                }
-                return realPath;
+            function isEmpty(str) {
+                return str == null || str == undefined || str.length <= 0;
             }
 
-            function getClickPath() {
-                var nodeId = $("#nodeId").val();
-                var nodeText = $("#nodeText").val();
-                var path = "/click";
-                if (isNotEmpty(nodeId)) {
-                    path += "?nodeId=" + nodeId;
-                }
-                if (isNotEmpty(nodeText)) {
-                    path += "&nodeText=" + nodeText;
-                }
-                return path;
-            }
+            $("#btn_menu").on("click", function() {
+                const sidebar = document.getElementById("sidebar");
+                const content = document.getElementById("contentRoot");
+                sidebar.classList.toggle("active");
+                content.classList.toggle("active");
+            });
 
             $("#btn_quick_get_data").on("click", function() {
                 getNodeData("/getPageSimpleNodeInfo");
             });
+
+            function getScrollPath(path) {
+                var distance = $("#scrollDistance").val();
+                var realPath = path;
+                if (isNotEmpty(distance)) {
+                    realPath += "?distance=" + distance;
+                }
+                return realPath;
+            }
 
             $("#top").on("click", function() {
                 nodeAction(getScrollPath("/scrollUp"));
@@ -275,7 +267,36 @@
             });
 
             $("#click").on("click", function() {
-                nodeAction(getClickPath(getClickPath()));
+                var nodeId = $("#nodeId").val();
+                var nodeText = $("#nodeText").val();
+                var path = "/click";
+                if (isNotEmpty(nodeId)) {
+                    path += "?nodeId=" + nodeId;
+                }
+                if (isNotEmpty(nodeText)) {
+                    if (isEmpty(nodeId)) {
+                        path += "?nodeText=" + nodeText;
+                    } else {
+                        path += "&nodeText=" + nodeText;
+                    }
+                }
+                if (isEmpty(nodeId) && isEmpty(nodeText)) {
+                    alert("请输入节点ID或者节点Text");
+                    return;
+                }
+                nodeAction(path);
+            });
+
+            $("#input").on("click", function() {
+                var editNodeId = $("#editNodeId").val();
+                var inputContent = $("#inputContent").val();
+
+                if (isEmpty(editNodeId)) {
+                    alert("请输入EditText的ID");
+                    return;
+                }
+                var path = "/input?nodeId=" + editNodeId + "&content=" + inputContent;
+                nodeAction(path);
             });
 
         });
@@ -288,10 +309,6 @@
     <div class="input-group input-group-sm mb-3">
         <span class="input-group-text">单次滑动距离</span>
         <input type="text" class="form-control" placeholder="默认500px" id="scrollDistance">
-    </div>
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text">单次滑动时长</span>
-        <input type="text" class="form-control" placeholder="默认300毫秒" id="scrollDuration">
     </div>
 
     <div class="remote">
@@ -311,14 +328,27 @@
         <span class="input-group-text node">节点text</span>
         <input type="text" class="form-control" placeholder="需要点击节点的text" id="nodeText">
     </div>
-    <div class="action click" id="click">点击节点</div>
-    <div class="clickTip">温馨提示：当id或者text唯一时，任选一个输入即可；当同一个id对应多个节点时候，可以再用text进行区分</div>
+    <div class="action click" id="click">点击</div>
+
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text node">输入框id</span>
+        <input type="text" class="form-control" placeholder="EditText的ID" id="editNodeId">
+    </div>
+    <div class="input-group input-group-sm mb-3">
+        <span class="input-group-text node">输入内容</span>
+        <input type="text" class="form-control" placeholder="输入的内容" id="inputContent">
+    </div>
+    <div class="action click" id="input">输入</div>
+
+    <div class="clickTip">温馨提示：【点击】当id或者text唯一时，任选一个输入即可；当同一个id或者一个text对应多个节点时候，同时用id和text确保节点唯一性！</div>
 
 </div>
 
 <div id="topNavContainer">
     <button id="btn_menu" class="btn btn-primary">菜单</button>
-    <button id="btn_quick_get_data" class="btn btn-primary">一键获取手机当前窗口节点数据</button>
+    <button id="btn_quick_get_data" class="btn btn-primary">一键获取手机当前窗口节点数据
+        <span class="spinner-border spinner-border-sm" id="loading" style="display: none;"></span>
+    </button>
 </div>
 
 <div id="contentRoot">

@@ -3,6 +3,8 @@ package com.lygttpod.android.auto.tools.service
 import com.android.accessibility.ext.acc.clickById
 import com.android.accessibility.ext.acc.clickByIdAndText
 import com.android.accessibility.ext.acc.clickByText
+import com.android.accessibility.ext.acc.findNodeById
+import com.android.accessibility.ext.acc.inputText
 import com.android.accessibility.ext.acc.pressBackButton
 import com.android.accessibility.ext.acc.printNodeInfo
 import com.android.accessibility.ext.acc.scrollDown
@@ -18,7 +20,7 @@ import com.lygttpod.android.auto.tools.manager.ContentManger
 @Service(port = 9527)
 abstract class AutoToolsService {
 
-    @Page("index")
+    @Page("")
     fun getIndexPage() = "auto_tools_index.html"
 
     @Get("getPageNodeInfo")
@@ -97,6 +99,13 @@ abstract class AutoToolsService {
             duration,
             rootNode
         )
+    }
+
+    @Get("input")
+    fun input(nodeId: String, content: String): Boolean {
+        val rootNode =
+            AutoToolsAccessibility.autoToolsAccessibility?.rootInActiveWindow ?: return false
+        return rootNode.findNodeById(nodeId)?.inputText(content) ?: false
     }
 
 }

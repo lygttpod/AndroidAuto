@@ -42,7 +42,7 @@ class ToolsMainFragment : Fragment() {
         initListener()
         initObserver()
         initALS()
-        "${getPhoneWifiIpAddress()}:${ALSHelper.serviceList.firstOrNull()?.port}/index".also { binding.tvIpAddress.text = it }
+        "PC端浏览器输入下边地址有惊喜哦\n${getPhoneWifiIpAddress()}:${ALSHelper.serviceList.firstOrNull()?.port}".also { binding.tvIpAddress.text = it }
     }
 
     private fun initALS() {
