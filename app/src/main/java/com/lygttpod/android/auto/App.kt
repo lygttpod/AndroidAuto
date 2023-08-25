@@ -1,6 +1,7 @@
 package com.lygttpod.android.auto
 
 import android.app.Application
+import com.pgyersdk.crash.PgyCrashManager
 
 class App : Application() {
 
@@ -12,5 +13,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        PgyCrashManager.register()
     }
 }
