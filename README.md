@@ -3,6 +3,9 @@ Android自动化工具
 
 ### [下载demo](https://www.pgyer.com/androidAuto)体验
 
+### PC端浏览器效果
+![PC端展示效果](https://github.com/lygttpod/AndroidAuto/assets/11826777/f76e782b-4f9e-4de0-ba1d-0670f586ff5d)
+
 ### 相关文章介绍（按顺序发布）
 
 * 一、[【玩转Android自动化】开篇序言](https://juejin.cn/post/7266076520111276069)
