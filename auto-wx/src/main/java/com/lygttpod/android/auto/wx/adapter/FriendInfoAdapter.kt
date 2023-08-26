@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.lygttpod.android.auto.wx.data.WxUserInfo
-import com.lygttpod.android.auto.wx.em.FriendStatus
 import com.lygttpod.android.auto.wx.R
+import com.lygttpod.android.auto.wx.data.WxUserInfo
 import com.lygttpod.android.auto.wx.databinding.ItemFriendBinding
+import com.lygttpod.android.auto.wx.em.FriendStatus
 
 
 class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewHolder>() {
@@ -27,8 +27,32 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
 
     override fun getItemCount() = list.size
 
-    fun setData(list: List<WxUserInfo>) {
-        this.list = list.toMutableList()
+    fun clear() {
+        list.clear()
+        notifyDataSetChanged()
+    }
+
+    fun filterNotNormalData() {
+        this.list =
+            list.filterNot { it.status == FriendStatus.NORMAL || it.status == FriendStatus.UNKNOW }
+                .toMutableList()
+        notifyDataSetChanged()
+    }
+    fun filterUnCheckData() {
+        this.list =
+            list.filterNot { it.status == FriendStatus.NORMAL || it.status == FriendStatus.UNKNOW }
+                .toMutableList()
+        notifyDataSetChanged()
+    }
+    fun filterAllData() {
+        this.list =
+            list.filterNot { it.status == FriendStatus.NORMAL || it.status == FriendStatus.UNKNOW }
+                .toMutableList()
+        notifyDataSetChanged()
+    }
+
+    fun setData(list: MutableList<WxUserInfo>) {
+        this.list = list
         notifyDataSetChanged()
     }
 

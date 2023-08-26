@@ -60,6 +60,21 @@ object WXContactPage : IPage {
     }
 
     /**
+     * 通过字段滑动列表去找到上次已经检测过的好友的位置，从他后边继续检测
+     */
+    suspend fun scrollToLastUserPosition(userName: String?): Boolean {
+        userName ?: return false
+        return delayAction {
+            retryCheckTaskWithLog("【继续上次检测】先定位到【$userName】的位置", timeOutMillis = 60_000) {
+                wxAccessibilityService.scrollToFindByText(
+                    Nodes.contactListNode.nodeId,
+                    userName
+                ) != null
+            }
+        }
+    }
+
+    /**
      * 通过上次点击昵称去找下一个需要点击的节点
      */
     suspend fun scrollToClickNextNodeByCurrentText(lastUser: String?): String? {

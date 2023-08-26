@@ -1,23 +1,30 @@
 package com.lygttpod.android.auto.wx.helper
 
 import android.content.Context
-import android.util.Log
 import com.android.accessibility.ext.acc.pressBackButton
 import com.android.accessibility.ext.goToWx
+import com.android.accessibility.ext.toast
 import com.lygttpod.android.auto.wx.data.WxUserInfo
-import com.lygttpod.android.auto.wx.ktx.formatTime
 import com.lygttpod.android.auto.wx.page.WXHomePage
 import com.lygttpod.android.auto.wx.page.group.WXCreateGroupPage
 import com.lygttpod.android.auto.wx.page.group.WXGroupChatPage
 import com.lygttpod.android.auto.wx.page.group.WXGroupInfoPage
 import com.lygttpod.android.auto.wx.page.group.WXGroupManagerPage
 import com.lygttpod.android.auto.wx.service.wxAccessibilityService
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /**
  * 拉群检测好友状态任务
  */
 object TaskByGroupHelper {
+
+    private val taskScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     //微信规则：1、同时最多邀请40人创建群；2、超过30人的群会出现单独向用户发送群聊邀请的消息
     //所以就设为一个稍微安全一点的值
@@ -26,20 +33,32 @@ object TaskByGroupHelper {
     //已检测过的用户列表
     val alreadyCheckedUsers = mutableListOf<String>()
 
-    suspend fun startCheckByCreateGroup(context: Context) {
+    private val mutex = Mutex()
+
+    fun startTask(context: Context) {
+        taskScope.launch {
+            if (mutex.isLocked) {
+                context.toast("上次任务还没结束哦(有重试机制)，请稍等再试")
+                return@launch
+            }
+            mutex.withLock {
+                FriendStatusHelper.taskCallBack?.onTaskStart("正在执行【拉群检测】任务")
+                val start = System.currentTimeMillis()
+                startCheckByCreateGroup(context)
+                val end = System.currentTimeMillis()
+                FriendStatusHelper.taskCallBack?.onTaskEnd(end - start)
+            }
+        }
+    }
+
+    private suspend fun startCheckByCreateGroup(context: Context) {
         alreadyCheckedUsers.clear()
-        FriendStatusHelper.init()
+        FriendStatusHelper.clearFriendsStatusList()
         context.goToWx()
         //判断当前是否进入到微信
         val inWxApp = WXHomePage.waitEnterWxApp()
         if (!inWxApp) return
-        FriendStatusHelper.taskCallBack?.onTaskStart()
-        val taskStart = System.currentTimeMillis()
         singleTask()
-        val taskEnd = System.currentTimeMillis() - taskStart
-        FriendStatusHelper.taskCallBack?.onTaskEnd(taskEnd)
-        Log.d("LogTracker", "startCheckByCreateGroup: 任务执行结束，耗时${taskEnd.formatTime()}")
-        Log.d("result", "$alreadyCheckedUsers")
         //任务结束返回APP
         val isHome = WXHomePage.backToHome()
         if (isHome) {

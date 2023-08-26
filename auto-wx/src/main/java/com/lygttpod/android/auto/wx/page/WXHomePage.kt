@@ -36,10 +36,12 @@ object WXHomePage : IPage {
      * 等待打开微信APP
      */
     suspend fun waitEnterWxApp(): Boolean {
-        return retryCheckTaskWithLog("等待打开微信APP") {
-            val inApp = isMe()
-            WXAccessibility.isInWXApp.set(inApp)
-            inApp
+        return delayAction {
+            retryCheckTaskWithLog("等待打开微信APP") {
+                val inApp = isMe()
+                WXAccessibility.isInWXApp.set(inApp)
+                inApp
+            }
         }
     }
 

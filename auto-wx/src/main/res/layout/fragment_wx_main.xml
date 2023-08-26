@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:padding="10dp">
 
     <androidx.appcompat.widget.AppCompatSpinner
         android:id="@+id/btn_wx_version"
@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="打开无障碍服务"
+        android:text="打开【微信自动化】服务"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_wx_version" />
 
@@ -43,7 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:checked="false"
-        android:text="微信自动抢红包"
+        android:text="自动抢红包"
         app:layout_constraintBottom_toBottomOf="@+id/btn_open_service"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btn_open_service" />
@@ -77,17 +77,76 @@
 
     <TextView
         android:id="@+id/tv_task_des"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
         android:gravity="center"
         android:textColor="@color/friend_delete"
-        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_check_by_group"
         tools:text="任务总耗时: 100s" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/tv_task_des"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_task_des">
+
+        <com.lygttpod.shape.view.ShapeTextView
+            android:id="@+id/btn_filter_all"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="全部"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeCornersBottomLeftRadius="5dp"
+            app:shapeCornersBottomRightRadius="0dp"
+            app:shapeCornersTopLeftRadius="5dp"
+            app:shapeCornersTopRightRadius="0dp"
+            app:shapeStrokeColor="@color/black"
+            app:shapeStrokeWidth="0.5dp" />
+
+        <com.lygttpod.shape.view.ShapeTextView
+            android:id="@+id/btn_filter_not_normal"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="异常"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/btn_filter_all"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeStrokeColor="@color/black"
+            app:shapeStrokeWidth="0.5dp" />
+
+        <com.lygttpod.shape.view.ShapeTextView
+            android:id="@+id/btn_filter_uncheck"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:gravity="center"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="待检测"
+            android:textSize="10sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/btn_filter_not_normal"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:shapeCornersBottomLeftRadius="0dp"
+            app:shapeCornersBottomRightRadius="5dp"
+            app:shapeCornersTopLeftRadius="0dp"
+            app:shapeCornersTopRightRadius="5dp"
+            app:shapeStrokeColor="@color/black"
+            app:shapeStrokeWidth="0.5dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view"

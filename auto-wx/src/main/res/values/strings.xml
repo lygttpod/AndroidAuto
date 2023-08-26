@@ -2,6 +2,6 @@
 
     <string name="wx_main_fragment_label">微信自动化</string>
 
-    <string name="wx_auto_label">【微信自动化功能】</string>
+    <string name="wx_auto_label">【微信自动化】</string>
     <string name="wx_auto_des">1、自动化检测好友关系，甄别是否被好友 拉黑、删除，或者好友账号异常等状态；\n2、微信自动抢红包；\n3、自动化过程不涉个人信息，请放心使用</string>
 </resources>

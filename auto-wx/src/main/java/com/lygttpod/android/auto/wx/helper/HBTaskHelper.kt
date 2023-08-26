@@ -53,7 +53,10 @@ object HBTaskHelper {
                 }
             }
         } else {
-            hbTaskScope.launch { eventFlow.emit(event) }
+            hbTaskScope.launch {
+                if (mutex.isLocked) return@launch
+                eventFlow.emit(event)
+            }
         }
     }
 

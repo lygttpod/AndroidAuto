@@ -43,6 +43,7 @@ class ToolsMainFragment : Fragment() {
         initObserver()
         initALS()
         "PC端浏览器输入下边地址有惊喜哦\n${getPhoneWifiIpAddress()}:${ALSHelper.serviceList.firstOrNull()?.port}".also { binding.tvIpAddress.text = it }
+        ContentManger.printContent = ""
     }
 
     private fun initALS() {
@@ -60,7 +61,7 @@ class ToolsMainFragment : Fragment() {
         toolsServiceLiveData.observe(viewLifecycleOwner) { open ->
             binding.btnNodePrint.isEnabled = open
             binding.btnOpenService.text =
-                if (open) "【页面节点速查】服务已开启" else "点击打开【页面节点速查】服务"
+                if (open) "【布局节点速查器】服务已开启" else "打开【布局节点速查器】服务"
             binding.tvIpAddress.visibility = if (open) View.VISIBLE else View.GONE
         }
 
