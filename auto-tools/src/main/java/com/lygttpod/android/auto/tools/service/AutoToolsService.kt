@@ -58,47 +58,23 @@ abstract class AutoToolsService {
     }
 
     @Get("scrollUp")
-    fun scrollUp(distance: Int, duration: Long): Boolean {
-        val rootNode =
-            AutoToolsAccessibility.autoToolsAccessibility?.rootInActiveWindow ?: return false
-        return AutoToolsAccessibility.autoToolsAccessibility.scrollUp(
-            distance,
-            duration,
-            rootNode
-        )
+    fun scrollUp(distance: Int): Boolean {
+        return AutoToolsAccessibility.autoToolsAccessibility.scrollUp(distance)
     }
 
     @Get("scrollDown")
-    fun scrollDown(distance: Int, duration: Long): Boolean {
-        val rootNode =
-            AutoToolsAccessibility.autoToolsAccessibility?.rootInActiveWindow ?: return false
-        return AutoToolsAccessibility.autoToolsAccessibility.scrollDown(
-            distance,
-            duration,
-            rootNode
-        )
+    fun scrollDown(distance: Int): Boolean {
+        return AutoToolsAccessibility.autoToolsAccessibility.scrollDown(distance)
     }
 
     @Get("scrollLeft")
-    fun scrollLeft(distance: Int, duration: Long): Boolean {
-        val rootNode =
-            AutoToolsAccessibility.autoToolsAccessibility?.rootInActiveWindow ?: return false
-        return AutoToolsAccessibility.autoToolsAccessibility.scrollLeft(
-            distance,
-            duration,
-            rootNode
-        )
+    fun scrollLeft(distance: Int): Boolean {
+        return AutoToolsAccessibility.autoToolsAccessibility.scrollLeft(distance)
     }
 
     @Get("scrollRight")
-    fun scrollRight(distance: Int, duration: Long): Boolean {
-        val rootNode =
-            AutoToolsAccessibility.autoToolsAccessibility?.rootInActiveWindow ?: return false
-        return AutoToolsAccessibility.autoToolsAccessibility.scrollRight(
-            distance,
-            duration,
-            rootNode
-        )
+    fun scrollRight(distance: Int): Boolean {
+        return AutoToolsAccessibility.autoToolsAccessibility.scrollRight(distance)
     }
 
     @Get("input")

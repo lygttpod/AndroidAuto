@@ -1,14 +1,10 @@
 package com.android.accessibility.ext.acc
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.GestureDescription
-import android.graphics.Path
-import android.graphics.Rect
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.android.accessibility.ext.default
 import kotlinx.coroutines.delay
-import kotlin.math.abs
 
 
 fun AccessibilityService.findById(id: String): AccessibilityNodeInfo? {
@@ -38,18 +34,37 @@ fun AccessibilityService?.clickById(id: String, gestureClick: Boolean = true): B
     this ?: return false
     val find = rootInActiveWindow.findNodesById(id).firstOrNull() ?: return false
     return if (gestureClick) {
-        gestureClick(find)
-        true
+        gestureClick(find).takeIf { it } ?: find.click()
     } else {
-        find.click()
+        find.click().takeIf { it } ?: gestureClick(find)
     }
 }
 
-fun AccessibilityService?.clickByText(text: String): Boolean {
+fun AccessibilityService?.clickByText(text: String, gestureClick: Boolean = true): Boolean {
     this ?: return false
     val find = rootInActiveWindow.findNodesByText(text).firstOrNull() ?: return false
-    gestureClick(find)
-    return true
+    return if (gestureClick) {
+        gestureClick(find).takeIf { it } ?: find.click()
+    } else {
+        find.click().takeIf { it } ?: gestureClick(find)
+    }
+}
+
+
+fun AccessibilityService?.clickByIdAndText(
+    id: String,
+    text: String,
+    gestureClick: Boolean = true
+): Boolean {
+    this ?: return false
+    rootInActiveWindow.findNodesById(id).firstOrNull { it.text.default() == text }?.let { find ->
+        return if (gestureClick) {
+            gestureClick(find).takeIf { it } ?: find.click()
+        } else {
+            find.click().takeIf { it } ?: gestureClick(find)
+        }
+    }
+    return false
 }
 
 suspend fun AccessibilityService?.scrollToClickByText(
@@ -130,145 +145,11 @@ fun AccessibilityService?.printNodeInfo(simplePrint: Boolean = true): String {
     return rootInActiveWindow.printNodeInfo(simplePrint = simplePrint)
 }
 
-fun AccessibilityService?.clickByIdAndText(
-    id: String,
-    text: String
-): Boolean {
-    this ?: return false
-    rootInActiveWindow.findNodesById(id).firstOrNull { it.text.default() == text }?.let {
-        gestureClick(it)
-        return true
-    }
-    return false
-}
-
 /**
  * 模拟back按键
  */
 fun AccessibilityService.pressBackButton(): Boolean {
     return performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
-}
-
-/**
- * 利用手势模拟点击
- * @param node: 需要点击的节点
- * */
-fun AccessibilityService.gestureClick(node: AccessibilityNodeInfo) {
-    val nodeBounds = Rect().apply(node::getBoundsInScreen)
-    val x = nodeBounds.centerX().toFloat()
-    val y = nodeBounds.centerY().toFloat()
-    dispatchGesture(
-        GestureDescription.Builder().apply {
-            addStroke(
-                GestureDescription.StrokeDescription(
-                    Path().apply { moveTo(x, y) },
-                    0L,
-                    200L
-                )
-            )
-        }.build(),
-        object : AccessibilityService.GestureResultCallback() {
-            override fun onCompleted(gestureDescription: GestureDescription?) {
-                super.onCompleted(gestureDescription)
-            }
-        },
-        null
-    )
-}
-
-/**
- * 利用手势模拟滑动
- * @param distance: 需要滑动的距离，像素值 负值：向下滚动，正直：向上滚动
- * @param scrollDuration: 需要滑动时长
- * @param node: 需要滑动的节点
- * @param isVerticalDirection: 滚动方向，默认上下滑动，false 左右滑动
- * */
-private fun AccessibilityService.gestureScroll(
-    node: AccessibilityNodeInfo,
-    distance: Int,
-    scrollDuration: Long = 300,
-    isVerticalDirection: Boolean = true
-): Boolean {
-    try {
-        val nodeBounds = Rect().apply(node::getBoundsInScreen)
-        val x = nodeBounds.centerX().toFloat()
-        val y = nodeBounds.centerY().toFloat()
-        dispatchGesture(
-            GestureDescription.Builder().apply {
-                addStroke(
-                    GestureDescription.StrokeDescription(
-                        Path().apply {
-                            moveTo(x, y)
-                            lineTo(
-                                if (isVerticalDirection) x else x + distance,
-                                if (isVerticalDirection) y + distance else y
-                            )
-                        },
-                        0L,
-                        if (scrollDuration <= 0) 300 else scrollDuration
-                    )
-                )
-            }.build(),
-            object : AccessibilityService.GestureResultCallback() {
-                override fun onCompleted(gestureDescription: GestureDescription?) {
-                    super.onCompleted(gestureDescription)
-                }
-            },
-            null
-        )
-        return true
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return false
-    }
-}
-
-/**
- * 向上滚动
- */
-fun AccessibilityService?.scrollUp(
-    distance: Int = 500,
-    scrollDuration: Long = 300,
-    node: AccessibilityNodeInfo
-): Boolean {
-    this ?: return false
-    return gestureScroll(node, -abs(if (distance <= 0) 500 else distance), scrollDuration)
-}
-
-/**
- * 向下滚动
- */
-fun AccessibilityService?.scrollDown(
-    distance: Int = 500,
-    scrollDuration: Long = 300,
-    node: AccessibilityNodeInfo
-): Boolean {
-    this ?: return false
-    return gestureScroll(node, abs(if (distance <= 0) 500 else distance), scrollDuration)
-}
-
-/**
- * 向左滑动
- */
-fun AccessibilityService?.scrollLeft(
-    distance: Int = 500,
-    scrollDuration: Long = 300,
-    node: AccessibilityNodeInfo
-): Boolean {
-    this ?: return false
-    return gestureScroll(node, -abs(if (distance <= 0) 500 else distance), scrollDuration, false)
-}
-
-/**
- * 向右滑动
- */
-fun AccessibilityService?.scrollRight(
-    distance: Int = 500,
-    scrollDuration: Long = 300,
-    node: AccessibilityNodeInfo
-): Boolean {
-    this ?: return false
-    return gestureScroll(node, abs(if (distance <= 0) 500 else distance), scrollDuration, false)
 }
 
 suspend fun AccessibilityService?.findAllChildByScroll(
@@ -338,7 +219,7 @@ suspend fun AccessibilityService?.selectChild(
     val findTexts = mutableListOf<String>()
     val findNodes = findChildNodes(parentViewId, childViewId)
     val findIndex = findNodes.indexOfFirst { it.text.default() == lastText }
-    findNodes.filterIndexed { index, info -> index > findIndex }.forEach {
+    findNodes.filterIndexed { index, _ -> index > findIndex }.forEach {
         val text = it.text.default()
         if (!findTexts.contains(text)) {
             if (findTexts.size < maxSelectCount) {
