@@ -22,7 +22,7 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
     }
 
     override fun onBindViewHolder(holder: FriendInfoViewHolder, position: Int) {
-        holder.bindData(list[position])
+        holder.bindData(list[position], position)
     }
 
     override fun getItemCount() = list.size
@@ -75,7 +75,8 @@ class FriendInfoAdapter : RecyclerView.Adapter<FriendInfoAdapter.FriendInfoViewH
     class FriendInfoViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = ItemFriendBinding.bind(view)
 
-        fun bindData(wxUserInfo: WxUserInfo) {
+        fun bindData(wxUserInfo: WxUserInfo, position: Int) {
+            binding.tvIndex.text = "${position + 1}"
             binding.tvNickName.text = wxUserInfo.nickName
             binding.tvWxCode.text = wxUserInfo.wxCode
             binding.tvWxCode.visibility =

@@ -6,14 +6,24 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/tv_index"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="1" />
+
+    <TextView
         android:id="@+id/tv_nick_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
         android:textColor="@color/black"
         app:layout_constraintBottom_toTopOf="@id/tv_wx_code"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/tv_index"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_goneMarginBottom="15dp"
         tools:text="微信昵称" />

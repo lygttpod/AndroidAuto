@@ -5,9 +5,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="friend_delete">#CD0000</color>
-    <color name="friend_black">#CD2990</color>
-    <color name="friend_exc">#CD4F39</color>
+    <color name="friend_delete">#ff3030</color>
+    <color name="friend_black">#00ff00</color>
+    <color name="friend_exc">#ee00ee</color>
     <color name="friend_unknow">#FF6200EE</color>
     <color name="friend_normal">#FF000000</color>
 </resources>
