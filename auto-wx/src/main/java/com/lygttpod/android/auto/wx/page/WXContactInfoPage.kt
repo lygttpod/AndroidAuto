@@ -63,7 +63,9 @@ object WXContactInfoPage : IPage {
                 ?.getOrNull(1)
                 .default()
                 .trim()
-            if (nickName.isNotBlank() && wxCode.isNotBlank()) {
+            //测试中发现当好友注销账号时候是没有微信号的，昵称下边显示的是【对方已注销账号】
+            //所以这里去掉微信号不能为空的判断
+            if (nickName.isNotBlank()) {
                 WxUserInfo(nickName, wxCode)
             } else {
                 null
