@@ -205,7 +205,6 @@ fun AccessibilityService?.findChildNodes(
     if (size <= 0) return emptyList()
     for (index in 0 until size) {
         parentNode.getChild(index).findNodesById(childViewId).firstOrNull()?.let {
-            Log.d("printNodeInfo", "当前页parentNode可见的元素=======${it.text}")
             findList.add(it)
         }
     }

@@ -1,7 +1,6 @@
 package com.lygttpod.android.auto.wx.service
 
 import android.accessibilityservice.AccessibilityService
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.MutableLiveData
 import com.android.accessibility.ext.AsyncAccessibilityService
@@ -30,7 +29,6 @@ class WXAccessibility : AsyncAccessibilityService() {
     }
 
     override fun asyncHandleAccessibilityEvent(event: AccessibilityEvent) {
-        Log.d("WXAccessibility", "==========$event")
         HBTaskHelper.hbTask(event)
     }
 }
