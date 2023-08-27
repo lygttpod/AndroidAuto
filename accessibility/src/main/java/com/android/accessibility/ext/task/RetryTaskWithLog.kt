@@ -51,7 +51,7 @@ class LogTracker<T>(private val taskName: String) : ITaskTracker<T> {
     }
 
     override fun onError(error: Throwable, executeDuration: Long, executeCount: Int) {
-        Log.d(TAG, "【$taskName】任务执行异常，轮训总次数：${executeCount}, 耗时：$executeDuration ms")
+        Log.d(TAG, "【$taskName】任务执行异常【${error.message}】，轮训总次数：${executeCount}, 耗时：$executeDuration ms")
     }
 
 }

@@ -28,6 +28,14 @@ object WXGroupManagerPage : IPage {
         return wxAccessibilityService?.findByText(Nodes.groupManagerDisbandNode.nodeText) != null
     }
 
+    suspend fun inPage(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("检测是否在【群管理】页面") {
+                isMe()
+            }
+        }
+    }
+
     suspend fun clickDisbandGroup(): Boolean {
         return delayAction {
             retryCheckTaskWithLog("点击【解散该群聊】按钮") {
@@ -42,7 +50,7 @@ object WXGroupManagerPage : IPage {
             //text = 解散群聊后，群成员和群主都将被移出群聊。 → id = com.tencent.mm:id/kpi
             //text = 解散 → id = com.tencent.mm:id/knx
             retryCheckTaskWithLog("点击【解散】按钮") {
-                wxAccessibilityService.clickById(Nodes.groupManagerDialogConfirmNode.nodeId)
+                wxAccessibilityService.clickById(Nodes.groupManagerDialogConfirmNode.nodeId, false)
             }
         }
     }

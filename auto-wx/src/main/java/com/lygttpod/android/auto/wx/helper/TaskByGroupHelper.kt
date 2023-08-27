@@ -103,9 +103,15 @@ object TaskByGroupHelper {
         //点击群聊右上角按钮
         val isClickMore = WXGroupChatPage.clickMoreBtn()
         if (!isClickMore) return
+        //是否在群聊信息页
+        val groupManagerBtnShow = WXGroupInfoPage.groupManagerBtnShow()
+        if (!groupManagerBtnShow) return
         //点击群管理按钮
         val clickGroupManager = WXGroupInfoPage.clickGroupManager()
         if (!clickGroupManager) return
+        //是否在群管页面
+        val inGroupManagerPage = WXGroupManagerPage.inPage()
+        if (!inGroupManagerPage) return
         //点击解散该群聊按钮
         val clickDisbandGroup = WXGroupManagerPage.clickDisbandGroup()
         if (!clickDisbandGroup) return
@@ -115,6 +121,9 @@ object TaskByGroupHelper {
         //再次点击群聊右上角按钮
         val clickMoreAgain = WXGroupChatPage.clickMoreBtn()
         if (!clickMoreAgain) return
+        //是否出现删除按钮
+        val deleteShow = WXGroupInfoPage.deleteShow()
+        if (!deleteShow) return
         //点击删除按钮
         val clickDeleteGroup = WXGroupInfoPage.clickDeleteGroup()
         if (!clickDeleteGroup) return

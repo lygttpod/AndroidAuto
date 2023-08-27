@@ -1,7 +1,7 @@
 package com.lygttpod.android.auto.wx.page.group
 
 import android.util.Log
-import com.android.accessibility.ext.acc.click
+import com.android.accessibility.ext.acc.clickById
 import com.android.accessibility.ext.acc.findById
 import com.android.accessibility.ext.acc.findChildNodes
 import com.android.accessibility.ext.default
@@ -152,7 +152,7 @@ object WXGroupChatPage : IPage {
         return delayAction {
             retryCheckTaskWithLog("点击【群聊页右上角】按钮") {
                 //android.widget.ImageView → text =  → id = com.tencent.mm:id/eo → description = 聊天信息
-                wxAccessibilityService?.findById(Nodes.groupChatRightTopNode.nodeId).click()
+                wxAccessibilityService.clickById(Nodes.groupChatRightTopNode.nodeId, false)
             }
         }
     }

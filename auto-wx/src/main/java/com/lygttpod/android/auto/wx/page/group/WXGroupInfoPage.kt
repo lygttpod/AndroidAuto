@@ -1,7 +1,7 @@
 package com.lygttpod.android.auto.wx.page.group
 
 import com.android.accessibility.ext.acc.clickByText
-import com.android.accessibility.ext.acc.findById
+import com.android.accessibility.ext.acc.findByText
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.lygttpod.android.auto.wx.data.NodeInfo
 import com.lygttpod.android.auto.wx.page.IPage
@@ -25,13 +25,29 @@ object WXGroupInfoPage : IPage {
 
     override fun isMe(): Boolean {
         // 群管理 → id = android:id/text1
-        return wxAccessibilityService?.findById(Nodes.groupManagerNode.nodeText) != null
+        return wxAccessibilityService?.findByText(Nodes.groupManagerNode.nodeText) != null
+    }
+
+    suspend fun groupManagerBtnShow(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("判断是否在【群聊信息页】") {
+                isMe()
+            }
+        }
     }
 
     suspend fun clickGroupManager(): Boolean {
         return delayAction {
             retryCheckTaskWithLog("点击【群管理】按钮") {
-                wxAccessibilityService.clickByText("群管理")
+                wxAccessibilityService.clickByText(Nodes.groupManagerNode.nodeText)
+            }
+        }
+    }
+
+    suspend fun deleteShow(): Boolean {
+        return delayAction {
+            retryCheckTaskWithLog("判断【删除】按钮是否显示") {
+                wxAccessibilityService?.findByText(Nodes.groupDeleteNode.nodeText) != null
             }
         }
     }
@@ -50,7 +66,10 @@ object WXGroupInfoPage : IPage {
             //text = 清空聊天记录，并在聊天列表中删除。 → id = com.tencent.mm:id/kpi
             //确定 → id = com.tencent.mm:id/knx → description
             retryCheckTaskWithLog("点击【确定】按钮") {
-                wxAccessibilityService.clickByText(Nodes.groupDeleteDialogConfirmNode.nodeText)
+                wxAccessibilityService.clickByText(
+                    Nodes.groupDeleteDialogConfirmNode.nodeText,
+                    false
+                )
             }
         }
     }
