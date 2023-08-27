@@ -103,7 +103,7 @@ suspend fun AccessibilityService?.scrollToFindNextNodeByCurrentText(
     return find
 }
 
-private suspend fun AccessibilityService?.getNextNodeByCurrentText(
+private fun AccessibilityService?.getNextNodeByCurrentText(
     scrollViewId: String,
     childViewId: String,
     lastText: String?,
@@ -116,7 +116,10 @@ private suspend fun AccessibilityService?.getNextNodeByCurrentText(
     return if (lastText.isNullOrBlank()) {
         find.firstOrNull()
     } else {
-        val lastIndex = find.indexOfFirst { it.text.default() == lastText }
+        //注意：有的好友设置了微信状态，在通讯录列表用户名后边会显示微信状态图标
+        //这个时候取到是昵称后边带空格(空格好像就是状态)，所有用contains保险一下
+        //断点调试了好久才发现这个【微信状态】问题
+        val lastIndex = find.indexOfFirst { it.text.default().contains(lastText) }
         if (lastIndex > -1) {
             find.getOrNull(lastIndex + 1)
         } else {
