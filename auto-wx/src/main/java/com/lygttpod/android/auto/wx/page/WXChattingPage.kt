@@ -1,9 +1,8 @@
 package com.lygttpod.android.auto.wx.page
 
 import com.android.accessibility.ext.acc.clickById
+import com.android.accessibility.ext.acc.clickByIdAndText
 import com.android.accessibility.ext.acc.findById
-import com.android.accessibility.ext.acc.findByIdAndText
-import com.android.accessibility.ext.acc.gestureClick
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.lygttpod.android.auto.wx.data.NodeInfo
 import com.lygttpod.android.auto.wx.service.wxAccessibilityService
@@ -53,16 +52,10 @@ object WXChattingPage : IPage {
             retryCheckTaskWithLog("点击聊天页功能区的【转账】按钮") {
 //                wxAccessibilityService?.printNodeInfo()
 //                wxAccessibilityService.findWithClickByText("转账")
-                val find = wxAccessibilityService?.findByIdAndText(
+                wxAccessibilityService.clickByIdAndText(
                     Nodes.chattingTransferMoneyNode.nodeId,
                     Nodes.chattingTransferMoneyNode.nodeText
                 )
-                if (find == null) {
-                    false
-                } else {
-                    wxAccessibilityService?.gestureClick(find)
-                    true
-                }
             }
         }
     }
