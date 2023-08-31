@@ -20,6 +20,8 @@ fun AccessibilityNodeInfo?.printNodeInfo(
         isClickable = node.isClickable,
         isScrollable = node.isScrollable,
         isEditable = node.isEditable,
+        isSelected = node.isSelected,
+        isChecked = node.isChecked,
         nodeInfo = node
     )
     val marker = if (isLast) """\--- """ else "+--- "

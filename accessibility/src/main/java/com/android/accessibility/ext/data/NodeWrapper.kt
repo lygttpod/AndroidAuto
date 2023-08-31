@@ -13,6 +13,8 @@ data class NodeWrapper(
     var isClickable: Boolean = false,
     var isScrollable: Boolean = false,
     var isEditable: Boolean = false,
+    var isSelected: Boolean = false,
+    var isChecked: Boolean = false,
     var nodeInfo: AccessibilityNodeInfo? = null
 ) {
     override fun toString() =
@@ -38,6 +40,12 @@ data class NodeWrapper(
         }
         if (isEditable) {
             ss.append(" → isEditable = $isEditable")
+        }
+        if (isSelected) {
+            ss.append(" → isSelected = $isSelected")
+        }
+        if (isChecked) {
+            ss.append(" → isChecked = $isChecked")
         }
         return ss.toString()
     }
