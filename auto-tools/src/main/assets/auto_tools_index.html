@@ -5,9 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>页面元素速查器</title>
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
 
     <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/5.1.1/js/bootstrap.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -92,6 +94,21 @@
             font-size: 16px;
         }
 
+        .setting {
+            width: 40px;
+            height: 40px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            display: flex;
+            margin-left: auto;
+            float: right;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
         .action {
             width: 120px;
             height: 40px;
@@ -153,7 +170,10 @@
         }
     </style>
     <script>
-        $(document).ready(function() {
+        var idColor = "";
+        var textColor = "";
+
+        $(document).ready(function () {
 
             function showLoading() {
                 const loading = document.getElementById("loading");
@@ -192,28 +212,37 @@
             }
 
             function nodeAction(url) {
-                fetchAndHandleData(url, false, function(data) {
-                        if (!data) {
-                            alert("操作失败");
-                        }
-                    },
-                    function(errorMessage) {
+                fetchAndHandleData(url, false, function (data) {
+                    if (!data) {
+                        alert("操作失败");
+                    }
+                },
+                    function (errorMessage) {
                         alert(errorMessage);
                     });
             }
 
             function getNodeData(url) {
-                fetchAndHandleData(url, true, function(data) {
-                        if (data.includes("\n")) { // 判断是否包含换行符
-                            const lines = data.split("\n"); // 按换行符分割内容为行
-                            const formattedLines = lines.map(line => line.trim()); // 去除行首尾空格
-                            const formattedData = formattedLines.join("\n"); // 将行拼接为字符串
-                            document.querySelector("#contentRoot pre").innerText = formattedData;
-                        } else {
-                            document.querySelector("#contentRoot pre").innerText = data; // 直接输出data
+                fetchAndHandleData(url, true, function (data) {
+                    if (data.includes("\n")) { // 判断是否包含换行符
+                        const lines = data.split("\n"); // 按换行符分割内容为行
+                        const formattedLines = lines.map(line => line.trim()); // 去除行首尾空格
+                        const formattedData = formattedLines.join("\n"); // 将行拼接为字符串
+                        const idRegex = /(id\s*=\s*([^\s]+)\s*)/g;
+                        const textRegex = /(text\s*=\s*([^\s]+)\s*)/g;
+                        var result = formattedData
+                        if (isNotEmpty(idColor) && idColor.length == 6) {
+                            result = result.replace(idRegex, '<span class="id-highlight" style="color: #' + idColor + ';">$&</span>');
                         }
-                    },
-                    function(errorMessage) {
+                        if (isNotEmpty(textColor) && textColor.length == 6) {
+                            result = result.replace(textRegex, '<span class="text-highlight" style="color: #' + textColor + ';">$&</span>');
+                        }
+                        document.querySelector("#contentRoot pre").innerHTML = result;
+                    } else {
+                        document.querySelector("#contentRoot pre").innerText = data; // 直接输出data
+                    }
+                },
+                    function (errorMessage) {
                         document.querySelector("#contentRoot pre").innerText = errorMessage;
                     });
             }
@@ -226,14 +255,25 @@
                 return str == null || str == undefined || str.length <= 0;
             }
 
-            $("#btn_menu").on("click", function() {
+            function getHighlight() {
+                fetchAndHandleData("/getHighlight", false, function (data) {
+                    idColor = data[0];
+                    textColor = data[1];
+                    $("#highlightIdColor").val(idColor);
+                    $("#highlightTextColor").val(textColor);
+                });
+            }
+
+            getHighlight();
+
+            $("#btn_menu").on("click", function () {
                 const sidebar = document.getElementById("sidebar");
                 const content = document.getElementById("contentRoot");
                 sidebar.classList.toggle("active");
                 content.classList.toggle("active");
             });
 
-            $("#btn_quick_get_data").on("click", function() {
+            $("#btn_quick_get_data").on("click", function () {
                 getNodeData("/getPageSimpleNodeInfo");
             });
 
@@ -246,27 +286,27 @@
                 return realPath;
             }
 
-            $("#top").on("click", function() {
+            $("#top").on("click", function () {
                 nodeAction(getScrollPath("/scrollUp"));
             });
 
-            $("#right").on("click", function() {
+            $("#right").on("click", function () {
                 nodeAction(getScrollPath("/scrollRight"));
             });
 
-            $("#bottom").on("click", function() {
+            $("#bottom").on("click", function () {
                 nodeAction(getScrollPath("/scrollDown"));
             });
 
-            $("#left").on("click", function() {
+            $("#left").on("click", function () {
                 nodeAction(getScrollPath("/scrollLeft"));
             });
 
-            $("#back").on("click", function() {
+            $("#back").on("click", function () {
                 nodeAction("/back");
             });
 
-            $("#click").on("click", function() {
+            $("#click").on("click", function () {
                 var nodeId = $("#nodeId").val();
                 var nodeText = $("#nodeText").val();
                 var path = "/click";
@@ -287,7 +327,7 @@
                 nodeAction(path);
             });
 
-            $("#input").on("click", function() {
+            $("#input").on("click", function () {
                 var editNodeId = $("#editNodeId").val();
                 var inputContent = $("#inputContent").val();
 
@@ -299,62 +339,154 @@
                 nodeAction(path);
             });
 
+            function showSettingDialog() {
+                $("#settingModalCenter").modal('show');
+            };
+
+
+            function hideSettingDialog() {
+                $("#settingModalCenter").modal('hide');
+            };
+
+            $("#setting").on("click", function () {
+                showSettingDialog();
+            });
+
+            $("#apply_btn").on("click", function () {
+                var highlightIdColor = $("#highlightIdColor").val();
+                var highlightTextColor = $("#highlightTextColor").val();
+
+                if (highlightIdColor.length > 0 && highlightIdColor.length != 6) {
+                    alert("idColor输入格式有误，请输入六位颜色值");
+                    return;
+                }
+                if (highlightTextColor.length > 0 && highlightTextColor.length != 6) {
+                    alert("textColor输入格式有误，请输入六位颜色值");
+                    return;
+                }
+
+                var path = "/setHighlight?idColor=" + highlightIdColor + "&textColor=" + highlightTextColor;
+                fetchAndHandleData(path, false, function (data) {
+                    if (data) {
+                        idColor = highlightIdColor;
+                        textColor = highlightTextColor;
+                        alert("设置成功，重新获取一下数据看看效果吧！");
+                        hideSettingDialog();
+                    } else {
+                        alert("设置失败");
+                    }
+                },
+                    function (errorMessage) {
+                        alert(errorMessage);
+                    });
+            });
+
         });
     </script>
 
 </head>
 
 <body>
-<div id="sidebar">
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text">单次滑动距离</span>
-        <input type="text" class="form-control" placeholder="默认500px" id="scrollDistance">
+<div id="root">
+    <div id="sidebar">
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text">单次滑动距离</span>
+            <input type="text" class="form-control" placeholder="默认500px" id="scrollDistance">
+        </div>
+
+        <div class="remote">
+            <div class="button top" id="top">↑</div>
+            <div class="button bottom" id="bottom">↓</div>
+            <div class="button left" id="left">←</div>
+            <div class="button right" id="right">→</div>
+        </div>
+
+        <div class="action back" id="back">返回</div>
+
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text node">节点id</span>
+            <input type="text" class="form-control" placeholder="需要点击节点的id" id="nodeId">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text node">节点text</span>
+            <input type="text" class="form-control" placeholder="需要点击节点的text" id="nodeText">
+        </div>
+        <div class="action click" id="click">点击</div>
+
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text node">输入框id</span>
+            <input type="text" class="form-control" placeholder="EditText的ID" id="editNodeId">
+        </div>
+        <div class="input-group input-group-sm mb-3">
+            <span class="input-group-text node">输入内容</span>
+            <input type="text" class="form-control" placeholder="输入的内容" id="inputContent">
+        </div>
+        <div class="action click" id="input">输入</div>
+
+        <div class="clickTip">温馨提示：【点击】当id或者text唯一时，任选一个输入即可；当同一个id或者一个text对应多个节点时候，同时用id和text确保节点唯一性！</div>
+
     </div>
 
-    <div class="remote">
-        <div class="button top" id="top">↑</div>
-        <div class="button bottom" id="bottom">↓</div>
-        <div class="button left" id="left">←</div>
-        <div class="button right" id="right">→</div>
+    <div id="topNavContainer">
+        <button type="button" id="btn_menu" class="navButton btn btn-primary">
+            <svg width="20" height="20" fill="currentColor" class="bi bi-list" style="color: #ffffff;"
+                 viewBox="0 0 16 16">
+                <path fill-rule="evenodd"
+                      d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+            </svg>
+        </button>
+        <button id="btn_quick_get_data" class="navButton btn btn-primary">一键获取手机当前窗口节点数据
+            <span class="spinner-border spinner-border-sm" id="loading" style="display: none;"></span>
+        </button>
+
+        <div class="navButton setting click" id="setting">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear"
+                 viewBox="0 0 16 16">
+                <path
+                        d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                <path
+                        d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+            </svg>
+        </div>
     </div>
 
-    <div class="action back" id="back">返回</div>
-
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text node">节点id</span>
-        <input type="text" class="form-control" placeholder="需要点击节点的id" id="nodeId">
+    <div id="contentRoot">
+        <pre></pre>
     </div>
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text node">节点text</span>
-        <input type="text" class="form-control" placeholder="需要点击节点的text" id="nodeText">
-    </div>
-    <div class="action click" id="click">点击</div>
-
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text node">输入框id</span>
-        <input type="text" class="form-control" placeholder="EditText的ID" id="editNodeId">
-    </div>
-    <div class="input-group input-group-sm mb-3">
-        <span class="input-group-text node">输入内容</span>
-        <input type="text" class="form-control" placeholder="输入的内容" id="inputContent">
-    </div>
-    <div class="action click" id="input">输入</div>
-
-    <div class="clickTip">温馨提示：【点击】当id或者text唯一时，任选一个输入即可；当同一个id或者一个text对应多个节点时候，同时用id和text确保节点唯一性！</div>
-
 </div>
+<!-- 设置配置弹框模块 -->
+<div class="modal fade" id="settingModalCenter" tabindex="-1" role="dialog"
+     aria-labelledby="settingModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingModalCenterTitle">配置</h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text node">高亮ID</span>
+                            <input type="text" class="form-control" placeholder="默认不高亮，如需请输入六位数色值，例如: 78a4eb"
+                                   id="highlightIdColor">
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text node">高亮Text</span>
+                            <input type="text" class="form-control" placeholder="默认不高亮，如需请输入六位数色值，例如: f33652"
+                                   id="highlightTextColor">
+                        </div>
+                    </div>
+                </form>
+            </div>
 
-<div id="topNavContainer">
-    <button id="btn_menu" class="btn btn-primary">菜单</button>
-    <button id="btn_quick_get_data" class="btn btn-primary">一键获取手机当前窗口节点数据
-        <span class="spinner-border spinner-border-sm" id="loading" style="display: none;"></span>
-    </button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="apply_btn">保存</button>
+            </div>
+        </div>
+    </div>
 </div>
-
-<div id="contentRoot">
-    <pre></pre>
-</div>
-
+<!-- 配置弹框模块 -->
 </body>
 
 </html>

@@ -11,10 +11,14 @@ import com.android.accessibility.ext.acc.scrollDown
 import com.android.accessibility.ext.acc.scrollLeft
 import com.android.accessibility.ext.acc.scrollRight
 import com.android.accessibility.ext.acc.scrollUp
+import com.android.accessibility.ext.default
 import com.android.local.service.annotation.Get
 import com.android.local.service.annotation.Page
 import com.android.local.service.annotation.Service
+import com.lygttpod.android.auto.tools.AppContext
 import com.lygttpod.android.auto.tools.accessibility.AutoToolsAccessibility
+import com.lygttpod.android.auto.tools.ktx.getSpValue
+import com.lygttpod.android.auto.tools.ktx.setSpValue
 import com.lygttpod.android.auto.tools.manager.ContentManger
 
 @Service(port = 9527)
@@ -84,4 +88,22 @@ abstract class AutoToolsService {
         return rootNode.findNodeById(nodeId)?.inputText(content) ?: false
     }
 
+    @Get("setHighlight")
+    fun setHighlight(idColor: String? = null, textColor: String? = null): Boolean {
+        val illegalityId = idColor.isNullOrBlank().not() && idColor!!.length != 6
+        val illegalityText = textColor.isNullOrBlank().not() && textColor!!.length != 6
+        if (illegalityId || illegalityText) {
+            return false
+        }
+        AppContext.setSpValue("idColor", idColor.default())
+        AppContext.setSpValue("textColor", textColor.default())
+        return true
+    }
+
+    @Get("getHighlight")
+    fun getHighlight(): List<String> {
+        val idColor = AppContext.getSpValue("idColor")
+        val textColor = AppContext.getSpValue("textColor")
+        return listOf(idColor, textColor)
+    }
 }

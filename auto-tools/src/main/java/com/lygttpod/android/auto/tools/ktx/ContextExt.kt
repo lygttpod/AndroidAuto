@@ -7,6 +7,7 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.provider.Settings
 import com.lygttpod.android.auto.tools.manager.FloatManager
+import com.lygttpod.android.auto.tools.utils.SPUtils
 
 fun Context?.gotoOverlayPermission() {
     this ?: return
@@ -28,5 +29,13 @@ fun Context?.showPrintFloat(application: Application) {
     } else {
         gotoOverlayPermission()
     }
+}
+
+fun Context.getSpValue(key: String): String {
+    return SPUtils.getString(this, this.packageName, key) ?: ""
+}
+
+fun Context.setSpValue(key: String, value: Any) {
+    SPUtils.saveValue(this, this.packageName, key, value)
 }
 
