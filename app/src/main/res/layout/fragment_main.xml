@@ -26,6 +26,15 @@
         app:layout_constraintTop_toBottomOf="@id/btn_print_tools" />
 
     <Button
+        android:id="@+id/btn_fuck_ad"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="自动跳过广告"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto" />
+
+    <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:enabled="false"
@@ -33,5 +42,5 @@
         android:textAllCaps="false"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_wx_auto" />
+        app:layout_constraintTop_toBottomOf="@id/btn_fuck_ad" />
 </androidx.constraintlayout.widget.ConstraintLayout>

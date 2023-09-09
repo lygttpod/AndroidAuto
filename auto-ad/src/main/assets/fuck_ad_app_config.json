@@ -1,0 +1,163 @@
+{
+  "fuckAd": {
+    "apps": [{
+      "appName": "招商银行",
+      "packageName": "cmb.pb",
+      "launcher": "cmb.pb.app.mainframe.container.PBMainActivity",
+      "adNodes": [{
+        "action": "跳过"
+      }]
+    },
+      {
+        "appName": "掌上生活",
+        "packageName": "com.cmbchina.ccd.pluto.cmbActivity",
+        "launcher": "com.cmbchina.ccd.pluto.cmbActivity.SplashActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "中国农业银行",
+        "packageName": "com.android.bankabc",
+        "launcher": "com.alipay.mobile.quinox.LauncherActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "WPS Office",
+        "packageName": "cn.wps.moffice_eng",
+        "launcher": "cn.wps.moffice.main.local.HomeRootActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "小米应用商店",
+        "packageName": "com.xiaomi.market",
+        "launcher": "com.xiaomi.market.business_ui.main.MarketTabActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "小米商城",
+        "packageName": "com.xiaomi.shop",
+        "launcher": "com.xiaomi.shop.activity.MainTabActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "爱奇艺",
+        "packageName": "com.qiyi.video",
+        "launcher": "org.qiyi.android.video.MainActivity",
+        "adNodes": [{
+          "action": "关闭"
+        }]
+      },
+      {
+        "appName": "腾讯视频",
+        "packageName": "com.tencent.qqlive",
+        "launcher": "com.tencent.qqlive.ona.activity.SplashHomeActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "优酷视频",
+        "packageName": "com.youku.phone",
+        "launcher": "com.youku.v2.HomePageEntry",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "芒果TV",
+        "packageName": "com.hunantv.imgo.activity",
+        "launcher": "com.hunantv.imgo.activity.MainActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "小红书",
+        "packageName": "com.xingin.xhs",
+        "launcher": "com.xingin.login.activity.WelcomeActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "哔哩哔哩",
+        "packageName": "tv.danmaku.bili",
+        "launcher": "tv.danmaku.bili.MainActivityV2",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "喜马拉雅",
+        "packageName": "com.ximalaya.ting.android",
+        "launcher": "com.ximalaya.ting.android.host.activity.MainActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "京东",
+        "packageName": "com.jingdong.app.mall",
+        "launcher": "com.jingdong.app.mall.MainFrameActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "网易云音乐",
+        "packageName": "com.netease.cloudmusic",
+        "launcher": "com.netease.cloudmusic.activity.MainActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "东方财富",
+        "packageName": "com.eastmoney.android.berlin",
+        "launcher": "com.eastmoney.android.berlin.activity.MainActivity",
+        "adNodes": [{
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "知乎",
+        "packageName": "com.zhihu.android",
+        "launcher": "com.zhihu.android.app.ui.activity.LauncherActivity",
+        "adNodes": [{
+          "version": "",
+          "id": "",
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "稀土掘金",
+        "packageName": "com.daimajia.gold",
+        "launcher": "im.juejin.android.ui.SplashActivity",
+        "adNodes": [{
+          "version": "",
+          "id": "",
+          "action": "跳过"
+        }]
+      },
+      {
+        "appName": "微博",
+        "packageName": "com.sina.weibo",
+        "launcher": "com.sina.weibo.SplashActivity",
+        "adNodes": [{
+          "version": "",
+          "id": "",
+          "action": "跳过"
+        }]
+      }
+    ]
+  }
+}

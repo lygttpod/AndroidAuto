@@ -1,6 +1,7 @@
 package com.lygttpod.android.auto
 
 import android.app.Application
+import com.lygttpod.android.auto.ad.FuckAdManager
 import com.lygttpod.android.auto.tools.AutoTools
 
 class App : Application() {
@@ -14,5 +15,6 @@ class App : Application() {
         super.onCreate()
         instance = this
         AutoTools.init(this)
+        FuckAdManager.init(this)
     }
 }

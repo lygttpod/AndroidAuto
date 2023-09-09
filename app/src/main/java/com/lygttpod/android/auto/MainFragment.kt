@@ -38,6 +38,10 @@ class MainFragment : Fragment() {
         binding.btnWxAuto.setOnClickListener {
             findNavController().navigate(R.id.WxMainFragment)
         }
+
+        binding.btnFuckAd.setOnClickListener {
+            findNavController().navigate(R.id.FuckAdMainFragment)
+        }
     }
 
     override fun onDestroyView() {

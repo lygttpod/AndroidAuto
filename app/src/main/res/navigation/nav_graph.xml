@@ -9,20 +9,23 @@
         android:id="@+id/FirstFragment"
         android:name="com.lygttpod.android.auto.MainFragment"
         android:label="@string/main_fragment_label"
-        tools:layout="@layout/fragment_main">
-    </fragment>
+        tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/WxMainFragment"
         android:name="com.lygttpod.android.auto.wx.ui.WxMainFragment"
         android:label="@string/wx_main_fragment_label"
-        tools:layout="@layout/fragment_wx_main">
-    </fragment>
+        tools:layout="@layout/fragment_wx_main" />
 
     <fragment
         android:id="@+id/ToolsMainFragment"
         android:name="com.lygttpod.android.auto.tools.ui.ToolsMainFragment"
         android:label="@string/tools_main_fragment_label"
-        tools:layout="@layout/fragment_tools_main">
-    </fragment>
+        tools:layout="@layout/fragment_tools_main" />
+
+    <fragment
+        android:id="@+id/FuckAdMainFragment"
+        android:name="com.lygttpod.android.auto.ad.ui.FuckAdMainFragment"
+        android:label="@string/ad_main_fragment_label"
+        tools:layout="@layout/fragment_fuck_ad_main" />
 </navigation>

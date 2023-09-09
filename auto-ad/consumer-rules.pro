@@ -1,0 +1,1 @@
+-keep class com.lygttpod.android.auto.ad.data.** { *; }
