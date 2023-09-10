@@ -2,17 +2,17 @@ package com.lygttpod.android.auto.ad.task
 
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import androidx.lifecycle.MutableLiveData
 import com.android.accessibility.ext.acc.clickByText
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.android.accessibility.ext.toast
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.lygttpod.android.auto.ad.AppContext
 import com.lygttpod.android.auto.ad.accessibility.FuckADAccessibility
 import com.lygttpod.android.auto.ad.data.AdApp
+import com.lygttpod.android.auto.ad.data.FuckAd
 import com.lygttpod.android.auto.ad.data.FuckAdApps
-import com.lygttpod.android.auto.ad.ktx.loadAsset
+import com.lygttpod.android.auto.ad.ktx.queryAllInstallApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,16 +29,15 @@ object FuckADTask {
     private val fuckADTaskScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private var fuckAdApps: FuckAdApps? = null
+        set(value) {
+            field = value
+            fuckAdAppsLiveData.postValue(value)
+        }
+
+    var fuckAdAppsLiveData = MutableLiveData<FuckAdApps?>()
     private fun loadAdConfig(): FuckAdApps? {
         return try {
-            val json = AppContext.loadAsset("fuck_ad_app_config.json")
-            if (json.isNullOrEmpty()) {
-                null
-            } else {
-                val data: FuckAdApps =
-                    Gson().fromJson(json, object : TypeToken<FuckAdApps>() {}.type)
-                data
-            }
+            FuckAdApps(fuckAd = FuckAd(AppContext.queryAllInstallApp()))
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -47,28 +46,28 @@ object FuckADTask {
 
     fun analysisAppConfig() {
         fuckADTaskScope.launch {
-            fuckAdApps = loadAdConfig()
-            Log.d("FuckADTask", "analysisAppConfig: ${fuckAdApps?.toString()}")
-        }
-    }
-
-    fun fuckAD(event: AccessibilityEvent) {
-        fuckADTaskScope.launch {
-            val packageName = event.packageName.default()
-            val className = event.className.default()
-            val adApp =
-                fuckAdApps?.fuckAd?.apps?.find { it.packageName == packageName && it.launcher == className }
-            adApp?.let {
-                Log.d("FuckADTask", "打开了【${it.appName}】的【${it.launcher}】")
-                if (mutex.isLocked) return@let
-                skipAd(it)
+            if (fuckAdApps == null) {
+                fuckAdApps = loadAdConfig()
+                Log.d("FuckADTask", "analysisAppConfig: ${fuckAdApps?.toString()}")
             }
         }
     }
 
-    private suspend fun skipAd(adApp: AdApp) {
-        mutex.withLock {
-            val acc = FuckADAccessibility.fuckADAccessibility ?: return@withLock
+    fun fuckAD(event: AccessibilityEvent) {
+        if (mutex.isLocked) return
+        val packageName = event.packageName.default()
+        fuckAdApps?.fuckAd?.apps?.find { it.packageName == packageName }?.let {
+            Log.d("FuckADTask", "打开了【${it.appName}】的【${it.launcher}】")
+            if (it.isSkipped()) return@let
+            fuckADTaskScope.launch {
+                if (skipAd(it)) { it.skipSuccess() }
+            }
+        }
+    }
+
+    private suspend fun skipAd(adApp: AdApp): Boolean {
+        return mutex.withLock {
+            val acc = FuckADAccessibility.fuckADAccessibility ?: return false
             val actions = adApp.adNodes.map { it.action }.filter { it.isNotBlank() }
             retryCheckTaskWithLog(
                 "查找【${adApp.appName}】的【$actions】节点",
@@ -78,7 +77,7 @@ object FuckADTask {
                 if (skipResult) {
                     withContext(Dispatchers.Main) {
                         AppContext.toast("自动跳过广告啦")
-                        Log.d("FuckADTask", "自动跳过广告啦")
+                        Log.d("FuckADTask", "自动跳过【${adApp.appName}】的广告啦")
                     }
                 }
                 skipResult

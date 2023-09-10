@@ -4,7 +4,6 @@
 
     <string name="ad_label">【自动跳过广告(FuckAD)】</string>
     <string name="ad_introduce">使用说明</string>
-    <string name="ad_des">使用说明\n\n在无障碍服务中找到【自动跳过广告(FuckAD)】并开启；\n\n
-        自动启动页带有【跳过】或【关闭】字样的广告\n
+    <string name="ad_des">使用说明\n\n在无障碍服务中找到【自动跳过广告(FuckAD)】并开启；\n\n自动跳过启动页带有【跳过】或【关闭】字样的广告\n
     </string>
 </resources>

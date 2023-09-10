@@ -10,6 +10,7 @@ import com.android.accessibility.ext.isAccessibilityOpened
 import com.android.accessibility.ext.openAccessibilitySetting
 import com.lygttpod.android.auto.ad.accessibility.FuckADAccessibility
 import com.lygttpod.android.auto.ad.databinding.FragmentFuckAdMainBinding
+import com.lygttpod.android.auto.ad.task.FuckADTask
 
 
 class FuckAdMainFragment : Fragment() {
@@ -35,6 +36,7 @@ class FuckAdMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initListener()
         initObserver()
+        FuckADTask.analysisAppConfig()
     }
 
     override fun onResume() {
@@ -47,6 +49,11 @@ class FuckAdMainFragment : Fragment() {
         toolsServiceLiveData.observe(viewLifecycleOwner) { open ->
             binding.btnOpenService.text =
                 if (open) "【自动跳过广告(FuckAD)】服务已开启" else "打开【自动跳过广告(FuckAD)】服务"
+        }
+        FuckADTask.fuckAdAppsLiveData.observe(viewLifecycleOwner) {
+            val sb = StringBuilder("当前设备支持的跳过启动页广告的APP\n\n")
+            it?.fuckAd?.apps?.forEach { sb.append("${it.appName}\n") }
+            binding.tvSupportApp.text = sb.toString()
         }
     }
 
