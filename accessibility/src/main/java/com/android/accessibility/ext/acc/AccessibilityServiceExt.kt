@@ -3,6 +3,7 @@ package com.android.accessibility.ext.acc
 import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import com.android.accessibility.ext.data.NodeWrapper
 import com.android.accessibility.ext.default
 import kotlinx.coroutines.delay
 
@@ -43,6 +44,16 @@ fun AccessibilityService?.clickById(id: String, gestureClick: Boolean = true): B
 fun AccessibilityService?.clickByText(text: String, gestureClick: Boolean = true): Boolean {
     this ?: return false
     val find = rootInActiveWindow.findNodesByText(text).firstOrNull() ?: return false
+    return if (gestureClick) {
+        gestureClick(find).takeIf { it } ?: find.click()
+    } else {
+        find.click().takeIf { it } ?: gestureClick(find)
+    }
+}
+
+fun AccessibilityService?.clickByCustomRule(gestureClick: Boolean = true, customRule: (AccessibilityNodeInfo) -> Boolean): Boolean {
+    this ?: return false
+    val find = rootInActiveWindow.findNodeWithCustomRule(isPrint = false) { customRule(it) } ?: return false
     return if (gestureClick) {
         gestureClick(find).takeIf { it } ?: find.click()
     } else {

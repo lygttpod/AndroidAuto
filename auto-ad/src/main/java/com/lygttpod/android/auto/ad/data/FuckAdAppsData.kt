@@ -1,18 +1,23 @@
 package com.lygttpod.android.auto.ad.data
 
+import android.os.Parcelable
 import android.util.Log
+import kotlinx.parcelize.Parcelize
 
-data class FuckAdApps(val fuckAd: FuckAd)
+@Parcelize
+data class FuckAdApps(val fuckAd: FuckAd) : Parcelable
 
-data class FuckAd(val apps: List<AdApp>)
+@Parcelize
+data class FuckAd(val apps: MutableList<AdApp>) : Parcelable
 
+@Parcelize
 data class AdApp(
     val appName: String,
     val packageName: String,
     val launcher: String,
     var lastSkipSuccessTime: Long = 0,
-    val adNodes: List<ADNode> = listOf(ADNode(action = "跳过"), ADNode(action = "关闭"))
-) {
+    var adNode: ADNode = ADNode()
+) : Parcelable {
     fun skipSuccess() {
         lastSkipSuccessTime = System.currentTimeMillis()
     }
@@ -30,8 +35,16 @@ data class AdApp(
         }
         return skipped
     }
+
+    fun actionMaxLength(): Int = adNode.actionMaxLength
+
+    fun getNodeId(): String = adNode.id
+    fun getMaxLength(): Int = adNode.actionMaxLength
 }
 
+@Parcelize
 data class ADNode(
-    val action: String
-)
+    var action: String = "跳过,关闭",
+    var actionMaxLength: Int = 5,
+    var id: String = ""
+) : Parcelable

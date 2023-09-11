@@ -103,3 +103,40 @@ fun AccessibilityNodeInfo?.findNodeWrapperByContainsText(
     }
 }
 
+fun AccessibilityNodeInfo?.findNodeWithCustomRule(
+    isPrint: Boolean = true,
+    customRule: (AccessibilityNodeInfo) -> Boolean
+): AccessibilityNodeInfo? {
+    return findNodeWrapper(isPrint) { node ->
+        val realNode = node.nodeInfo
+        if (realNode == null) {
+            false
+        } else {
+            customRule(realNode)
+        }
+    }?.nodeInfo
+}
+
+fun AccessibilityNodeInfo?.isTextView(): Boolean {
+    this ?: return false
+    return this.className.contains("TextView")
+}
+
+fun AccessibilityNodeInfo?.findParent(predicate: AccessibilityNodeInfo.() -> Boolean): AccessibilityNodeInfo? {
+    this ?: return null
+    return when {
+        predicate(this) -> this
+        else -> parent?.findParent(predicate)
+    }
+}
+
+fun AccessibilityNodeInfo?.inListView(): Boolean {
+    this ?: return false
+    return this.findParent {
+        className.contains(
+            "ListView",
+            true
+        ) || className.contains("RecyclerView", true)
+    } != null
+}
+

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+
+    <TextView
+        android:id="@+id/tv_action_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1、碰到无法自动跳过广告时可以设置新的action进行适配（一般无需修改）"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_action"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Action"
+        app:layout_constraintBottom_toBottomOf="@id/et_node_action"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_node_action" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_node_action"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:hint="默认是跳过or关闭"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/tv_action"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_action_des" />
+
+    <TextView
+        android:id="@+id/tv_action_max_length_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="2、例如【跳过】长度是2,有的APP是【跳过(5)】长度是5,还有的是【5s | 跳过】长度是7;默认action最大长度是5，作用是尽量避免因字符中带有【跳过】而导致误判，特殊APP单独设置(越精准误触率约低)"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_node_action" />
+
+    <TextView
+        android:id="@+id/tv_action_max_length"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Max\nLength"
+        app:layout_constraintBottom_toBottomOf="@id/et_node_action_max_length"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_node_action_max_length" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_node_action_max_length"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:hint="默认action最大长度是5"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/tv_action_max_length"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_action_max_length_des" />
+
+    <TextView
+        android:id="@+id/tv_node_id_des"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="3、如果通过修改action依然无法自动跳转，大概率是APP的广告节点的text是空，这个时候可以设置ID的方式进行兼容；通过[布局节点速查器]寻找跳过广告的id分分钟搞定哦；注意：APP的节点ID大概率会每个版本不一样呦"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_node_action_max_length" />
+
+    <TextView
+        android:id="@+id/tv_node_id"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="ID"
+        app:layout_constraintBottom_toBottomOf="@id/et_node_id"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="@id/et_node_id" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_node_id"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:hint="一般无需配置,当某些APP的action为空或无法跳过时再设置"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toRightOf="@id/tv_node_id"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_node_id_des" />
+</androidx.constraintlayout.widget.ConstraintLayout>

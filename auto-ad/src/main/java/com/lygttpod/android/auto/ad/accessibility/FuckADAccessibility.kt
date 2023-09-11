@@ -17,10 +17,6 @@ class FuckADAccessibility : AsyncAccessibilityService() {
         fuckADAccessibility = this
     }
 
-    override fun onServiceConnected() {
-        super.onServiceConnected()
-        FuckADTask.analysisAppConfig()
-    }
     override fun onDestroy() {
         fuckADAccessibility = null
         super.onDestroy()

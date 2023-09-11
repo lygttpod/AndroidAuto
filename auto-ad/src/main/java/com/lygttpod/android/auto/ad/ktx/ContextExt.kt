@@ -2,8 +2,8 @@ package com.lygttpod.android.auto.ad.ktx
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.content.pm.ResolveInfo
+import android.util.Log
 import com.lygttpod.android.auto.ad.AppContext
 import com.lygttpod.android.auto.ad.data.AdApp
 
@@ -40,7 +40,10 @@ fun Context.queryAllInstallApp(): MutableList<AdApp> {
 
 // 检查应用是否为系统应用
 private fun isSystemApp(resolveInfo: ResolveInfo): Boolean {
-    return resolveInfo.activityInfo.applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+    val regex = "com\\.android\\.[^.]+" // 匹配系统应用 com.android. 后面跟着任意不包含 . 的字符
+    val result = resolveInfo.activityInfo.packageName.matches(Regex(regex))
+    Log.d("isSystemApp", "isSystemApp: ${resolveInfo.activityInfo.packageName} : $result")
+    return result
 }
 
 private fun isSelf(resolveInfo: ResolveInfo): Boolean {

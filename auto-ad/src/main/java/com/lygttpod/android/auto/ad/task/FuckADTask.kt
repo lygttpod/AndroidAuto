@@ -3,16 +3,18 @@ package com.lygttpod.android.auto.ad.task
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.MutableLiveData
-import com.android.accessibility.ext.acc.clickByText
+import com.android.accessibility.ext.acc.clickByCustomRule
+import com.android.accessibility.ext.acc.inListView
+import com.android.accessibility.ext.acc.isTextView
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
-import com.android.accessibility.ext.toast
 import com.lygttpod.android.auto.ad.AppContext
 import com.lygttpod.android.auto.ad.accessibility.FuckADAccessibility
 import com.lygttpod.android.auto.ad.data.AdApp
 import com.lygttpod.android.auto.ad.data.FuckAd
 import com.lygttpod.android.auto.ad.data.FuckAdApps
 import com.lygttpod.android.auto.ad.ktx.queryAllInstallApp
+import com.tencent.mmkv.MMKV
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -23,6 +25,8 @@ import kotlinx.coroutines.withContext
 
 
 object FuckADTask {
+
+    private const val APP_CONFIG = "appConfig"
 
     private val mutex = Mutex()
 
@@ -35,6 +39,13 @@ object FuckADTask {
         }
 
     var fuckAdAppsLiveData = MutableLiveData<FuckAdApps?>()
+
+    fun updateData(ad: AdApp) {
+        fuckAdApps?.fuckAd?.apps?.find { it.appName == ad.packageName }
+            ?.apply { adNode = ad.adNode }
+        save2File()
+    }
+
     private fun loadAdConfig(): FuckAdApps? {
         return try {
             FuckAdApps(fuckAd = FuckAd(AppContext.queryAllInstallApp()))
@@ -47,9 +58,31 @@ object FuckADTask {
     fun analysisAppConfig() {
         fuckADTaskScope.launch {
             if (fuckAdApps == null) {
-                fuckAdApps = loadAdConfig()
-                Log.d("FuckADTask", "analysisAppConfig: ${fuckAdApps?.toString()}")
+                fuckAdApps =
+                    MMKV.defaultMMKV().decodeParcelable(APP_CONFIG, FuckAdApps::class.java, null)
             }
+            loadAdConfig()?.let {
+                if (fuckAdApps == null) {
+                    fuckAdApps = it
+                } else {
+                    it.fuckAd.apps.forEach { newData ->
+                        val oldData =
+                            fuckAdApps!!.fuckAd.apps.find { it.packageName == newData.packageName }
+                        if (oldData != null) {
+                            newData.adNode = oldData.adNode
+                        }
+                    }
+                    fuckAdApps = it
+                }
+                save2File()
+            }
+        }
+    }
+
+    private fun save2File() {
+        fuckADTaskScope.launch {
+            MMKV.defaultMMKV().remove(APP_CONFIG)
+            MMKV.defaultMMKV().encode(APP_CONFIG, fuckAdApps)
         }
     }
 
@@ -60,7 +93,9 @@ object FuckADTask {
             Log.d("FuckADTask", "打开了【${it.appName}】的【${it.launcher}】")
             if (it.isSkipped()) return@let
             fuckADTaskScope.launch {
-                if (skipAd(it)) { it.skipSuccess() }
+                if (skipAd(it)) {
+                    it.skipSuccess()
+                }
             }
         }
     }
@@ -68,15 +103,29 @@ object FuckADTask {
     private suspend fun skipAd(adApp: AdApp): Boolean {
         return mutex.withLock {
             val acc = FuckADAccessibility.fuckADAccessibility ?: return false
-            val actions = adApp.adNodes.map { it.action }.filter { it.isNotBlank() }
+            val actions = adApp.adNode.action.split(",")
+            val id = adApp.adNode.id
             retryCheckTaskWithLog(
                 "查找【${adApp.appName}】的【$actions】节点",
                 timeOutMillis = 5000
             ) {
-                val skipResult = actions.find { acc.clickByText(it) } != null
+                val skipResult = acc.clickByCustomRule {
+                    if (id.isNotBlank()) {
+                        it.viewIdResourceName == id
+                    } else {
+                        if (it.isTextView()) {
+                            val text = it.text.default()
+                            //通过多重判断大大减少误触的概率
+                            text.length <= adApp.actionMaxLength()
+                                    && actions.find { action -> text.contains(action) } != null
+                                    && it.inListView().not()
+                        } else {
+                            false
+                        }
+                    }
+                }
                 if (skipResult) {
                     withContext(Dispatchers.Main) {
-                        AppContext.toast("自动跳过广告啦")
                         Log.d("FuckADTask", "自动跳过【${adApp.appName}】的广告啦")
                     }
                 }
