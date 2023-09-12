@@ -16,3 +16,4 @@ Android自动化工具
 * 六、[【玩转Android自动化】微信好友状态检查(拉群方式)](https://juejin.cn/post/7268590610188976165)
 * 七、[【玩转Android自动化】微信自动抢红包](https://juejin.cn/post/7269032845786513463)
 * 八、[【玩转Android自动化】微信版本适配](https://juejin.cn/post/7269046568211202103)
+* 九、[【玩转Android自动化】自动跳过APP启动页广告](https://juejin.cn/post/7277799132119416890)
