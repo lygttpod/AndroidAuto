@@ -8,9 +8,11 @@ import com.android.accessibility.ext.acc.inListView
 import com.android.accessibility.ext.acc.isTextView
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
+import com.android.accessibility.ext.toast
 import com.lygttpod.android.auto.ad.AppContext
 import com.lygttpod.android.auto.ad.accessibility.FuckADAccessibility
 import com.lygttpod.android.auto.ad.data.AdApp
+import com.lygttpod.android.auto.ad.data.FilterKeywordData
 import com.lygttpod.android.auto.ad.data.FuckAd
 import com.lygttpod.android.auto.ad.data.FuckAdApps
 import com.lygttpod.android.auto.ad.ktx.queryAllInstallApp
@@ -27,6 +29,7 @@ import kotlinx.coroutines.withContext
 object FuckADTask {
 
     private const val APP_CONFIG = "appConfig"
+    private const val FILTER_KEYWORD = "filterKeyword"
 
     private val mutex = Mutex()
 
@@ -39,6 +42,34 @@ object FuckADTask {
         }
 
     var fuckAdAppsLiveData = MutableLiveData<FuckAdApps?>()
+
+    private var filterKeywordData: FilterKeywordData? = null
+
+    fun updateKeywordList(keyword: String) {
+        fuckADTaskScope.launch {
+            getKeywordList()?.let {
+                if (it.list.contains(keyword)) {
+                    withContext(Dispatchers.Main) {
+                        AppContext.toast("已经添加过啦，不要重复添加哦")
+                    }
+                    return@launch
+                } else {
+                    it.list.add(keyword)
+                    MMKV.defaultMMKV().encode(FILTER_KEYWORD, it)
+                    withContext(Dispatchers.Main) {
+                        AppContext.toast("添加成功")
+                    }
+                }
+            }
+        }
+    }
+
+    fun getKeywordList(): FilterKeywordData? {
+        filterKeywordData =
+            MMKV.defaultMMKV().decodeParcelable(FILTER_KEYWORD, FilterKeywordData::class.java)
+                ?: FilterKeywordData(list = mutableListOf("关闭闹钟", "关闭提醒"))
+        return filterKeywordData
+    }
 
     fun updateData(ad: AdApp) {
         fuckAdApps?.fuckAd?.apps?.find { it.appName == ad.packageName }
@@ -116,7 +147,8 @@ object FuckADTask {
                         if (it.isTextView()) {
                             val text = it.text.default()
                             //通过多重判断大大减少误触的概率
-                            text.length <= adApp.actionMaxLength()
+                            filterKeywordData?.list?.find { it == text } == null
+                                    && text.length <= adApp.actionMaxLength()
                                     && actions.find { action -> text.contains(action) } != null
                                     && it.inListView().not()
                         } else {

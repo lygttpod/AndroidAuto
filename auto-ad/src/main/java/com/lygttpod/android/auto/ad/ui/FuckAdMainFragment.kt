@@ -11,10 +11,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.android.accessibility.ext.default
 import com.android.accessibility.ext.isAccessibilityOpened
 import com.android.accessibility.ext.openAccessibilitySetting
+import com.android.accessibility.ext.toast
 import com.lygttpod.android.auto.ad.R
 import com.lygttpod.android.auto.ad.accessibility.FuckADAccessibility
 import com.lygttpod.android.auto.ad.data.AdApp
 import com.lygttpod.android.auto.ad.databinding.DialogAppConfigBinding
+import com.lygttpod.android.auto.ad.databinding.DialogFilterKeywordBinding
 import com.lygttpod.android.auto.ad.databinding.FragmentFuckAdMainBinding
 import com.lygttpod.android.auto.ad.task.FuckADTask
 import com.lygttpod.android.auto.ad.ui.adapter.AppConfigAdapter
@@ -45,6 +47,7 @@ class FuckAdMainFragment : Fragment() {
         initView()
         initListener()
         initObserver()
+        FuckADTask.getKeywordList()
     }
 
     private fun initView() {
@@ -106,6 +109,30 @@ class FuckAdMainFragment : Fragment() {
     private fun initListener() {
         binding.btnOpenService.setOnClickListener {
             activity?.openAccessibilitySetting()
+        }
+        binding.btnFilterKeyword.setOnClickListener {
+            val view = layoutInflater.inflate(R.layout.dialog_filter_keyword, null)
+            val binding = DialogFilterKeywordBinding.bind(view)
+            binding.tvFilterKeywordList.text = FuckADTask.getKeywordList()?.list.toString()
+            AlertDialog
+                .Builder(requireContext())
+                .setView(view)
+                .setTitle("过滤关键词")
+                .setNegativeButton("取消") { _, _ ->
+                    {
+                    }
+                }
+                .setPositiveButton("添加") { _, _ ->
+                    run {
+                        val keyword = binding.etKeyword.text?.toString().default()
+                        if (keyword.isBlank()) {
+                            requireContext().toast("添加的关键词不能为空")
+                        } else {
+                            FuckADTask.updateKeywordList(keyword)
+                        }
+                    }
+                }
+                .show()
         }
     }
 

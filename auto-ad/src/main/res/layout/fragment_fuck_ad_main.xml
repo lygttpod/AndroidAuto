@@ -10,12 +10,22 @@
         android:id="@+id/btn_open_service"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:text="打开【自动跳过广告(Fuck AD)】服务"
         android:textAllCaps="false"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_filter_keyword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="发现有误触的情况? 关进小黑屋!"
+        android:textAllCaps="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_open_service" />
 
     <TextView
         android:id="@+id/tv_des"
@@ -26,14 +36,14 @@
         android:textAllCaps="false"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_open_service" />
+        app:layout_constraintTop_toBottomOf="@id/btn_filter_keyword" />
 
     <TextView
         android:id="@+id/tv_app_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:text="当前设备支持的跳过启动页广告的APP"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_des" />
 
