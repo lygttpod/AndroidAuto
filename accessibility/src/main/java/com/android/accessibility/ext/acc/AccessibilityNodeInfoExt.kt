@@ -1,5 +1,6 @@
 package com.android.accessibility.ext.acc
 
+import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.android.accessibility.ext.data.NodeWrapper
@@ -138,5 +139,50 @@ fun AccessibilityNodeInfo?.inListView(): Boolean {
             true
         ) || className.contains("RecyclerView", true)
     } != null
+}
+
+fun AccessibilityNodeInfo?.clickById(
+    id: String,
+    gestureClick: Boolean = true,
+    accessibilityService: AccessibilityService? = null
+): Boolean {
+    this ?: return false
+    val find = this.findNodesById(id).firstOrNull() ?: return false
+    return if (gestureClick && accessibilityService != null) {
+        accessibilityService.gestureClick(find).takeIf { it } ?: find.click()
+    } else {
+        find.click().takeIf { it } ?: accessibilityService.gestureClick(find)
+    }
+}
+
+fun AccessibilityNodeInfo?.clickByText(
+    text: String,
+    gestureClick: Boolean = true,
+    accessibilityService: AccessibilityService? = null
+): Boolean {
+    this ?: return false
+    val find = this.findNodesByText(text).firstOrNull() ?: return false
+    return if (gestureClick && accessibilityService != null) {
+        accessibilityService.gestureClick(find).takeIf { it } ?: find.click()
+    } else {
+        find.click().takeIf { it } ?: accessibilityService.gestureClick(find)
+    }
+}
+
+fun AccessibilityNodeInfo?.clickByIdAndText(
+    id: String,
+    text: String,
+    gestureClick: Boolean = true,
+    accessibilityService: AccessibilityService? = null
+): Boolean {
+    this ?: return false
+    this.findNodesById(id).firstOrNull { it.text.default() == text }?.let { find ->
+        return if (gestureClick && accessibilityService != null) {
+            accessibilityService.gestureClick(find).takeIf { it } ?: find.click()
+        } else {
+            find.click().takeIf { it } ?: accessibilityService.gestureClick(find)
+        }
+    }
+    return false
 }
 
