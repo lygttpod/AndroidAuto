@@ -25,32 +25,28 @@ import com.lygttpod.android.auto.tools.manager.ContentManger
 abstract class AutoToolsService {
 
     @Page("")
-    fun getIndexPage() = "auto_tools_index.html"
-
-    @Get("getPageNodeInfo")
-    fun getPageNodeInfo(): String {
-        ContentManger.printContent =
-            AutoToolsAccessibility.autoToolsAccessibility?.printNodeInfo(false)
-        return ContentManger.printContent
-            ?: "暂未获取到页面节点信息，请先确保APP已开启【布局节点速查器】无障碍功能"
+    fun getIndexPage(): String {
+        AutoToolsAccessibility.floatWindowPackageName = null
+        return "auto_tools_index.html"
     }
 
     @Get("getPageSimpleNodeInfo")
     fun getPageSimpleNodeInfo(): String {
         ContentManger.printContent =
-            AutoToolsAccessibility.autoToolsAccessibility?.printNodeInfo(true)
+            AutoToolsAccessibility.getRootWindowNodeInfo().printNodeInfo(simplePrint = true)
         return ContentManger.printContent
             ?: "暂未获取到页面节点信息，请先确保APP已开启【布局节点速查器】无障碍功能"
     }
 
     @Get("click")
     fun click(nodeId: String? = null, nodeText: String? = null): Boolean {
+        val accessibility = AutoToolsAccessibility.autoToolsAccessibility
         return if (nodeId.isNullOrBlank().not() && nodeText.isNullOrBlank().not()) {
-            AutoToolsAccessibility.autoToolsAccessibility.clickByIdAndText(nodeId!!, nodeText!!)
+            AutoToolsAccessibility.getRootWindowNodeInfo().clickByIdAndText(nodeId!!, nodeText!!, accessibilityService = accessibility)
         } else if (nodeId.isNullOrBlank().not()) {
-            AutoToolsAccessibility.autoToolsAccessibility.clickById(nodeId!!)
+            AutoToolsAccessibility.getRootWindowNodeInfo().clickById(nodeId!!, accessibilityService = accessibility)
         } else if (nodeText.isNullOrBlank().not()) {
-            AutoToolsAccessibility.autoToolsAccessibility.clickByText(nodeText!!)
+            AutoToolsAccessibility.getRootWindowNodeInfo().clickByText(nodeText!!, accessibilityService = accessibility)
         } else {
             false
         }
@@ -88,16 +84,36 @@ abstract class AutoToolsService {
         return rootNode.findNodeById(nodeId)?.inputText(content) ?: false
     }
 
-    @Get("setHighlight")
-    fun setHighlight(idColor: String? = null, textColor: String? = null): Boolean {
-        val illegalityId = idColor.isNullOrBlank().not() && idColor!!.length != 6
-        val illegalityText = textColor.isNullOrBlank().not() && textColor!!.length != 6
-        if (illegalityId || illegalityText) {
+    @Get("setConfig")
+    fun setConfig(type: String, value: String? = null): Boolean {
+        when(type) {
+            "idColor" -> setIdColor(value)
+            "textColor" -> setTextColor(value)
+            "floatWindowPackageName" -> setFloatWindowPackageName(value)
+        }
+        return true
+    }
+
+    private fun setIdColor(value: String?): Boolean {
+        val illegalityId = value.isNullOrBlank().not() && value!!.length != 6
+        if (illegalityId) {
             return false
         }
-        AppContext.setSpValue("idColor", idColor.default())
-        AppContext.setSpValue("textColor", textColor.default())
+        AppContext.setSpValue("idColor", value.default())
         return true
+    }
+
+    private fun setTextColor(value: String?): Boolean {
+        val illegalityText = value.isNullOrBlank().not() && value!!.length != 6
+        if (illegalityText) {
+            return false
+        }
+        AppContext.setSpValue("textColor", value.default())
+        return true
+    }
+
+    private fun setFloatWindowPackageName(value: String?) {
+        AutoToolsAccessibility.floatWindowPackageName = value
     }
 
     @Get("getHighlight")

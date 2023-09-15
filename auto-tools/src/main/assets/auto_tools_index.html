@@ -151,6 +151,10 @@
             margin-right: 10px;
         }
 
+        .form-control.setting {
+            margin-right: 0px;
+        }
+
         .input-group {
             padding-left: 10px;
             padding-right: 10px;
@@ -158,6 +162,11 @@
 
         .input-group-text.node {
             width: 80px;
+            align-items: center;
+        }
+
+        .input-group-text.save {
+            width: 40px;
             align-items: center;
         }
 
@@ -352,24 +361,13 @@
                 showSettingDialog();
             });
 
-            $("#apply_btn").on("click", function () {
-                var highlightIdColor = $("#highlightIdColor").val();
-                var highlightTextColor = $("#highlightTextColor").val();
-
-                if (highlightIdColor.length > 0 && highlightIdColor.length != 6) {
-                    alert("idColor输入格式有误，请输入六位颜色值");
-                    return;
-                }
-                if (highlightTextColor.length > 0 && highlightTextColor.length != 6) {
-                    alert("textColor输入格式有误，请输入六位颜色值");
-                    return;
-                }
-
-                var path = "/setHighlight?idColor=" + highlightIdColor + "&textColor=" + highlightTextColor;
+            function setConfig(type, value, successCallback) {
+                var path = "/setConfig?type=" + type + "&value=" + value;
                 fetchAndHandleData(path, false, function (data) {
                     if (data) {
-                        idColor = highlightIdColor;
-                        textColor = highlightTextColor;
+                        if (successCallback) {
+                            successCallback(value);
+                        }
                         alert("设置成功，重新获取一下数据看看效果吧！");
                         hideSettingDialog();
                     } else {
@@ -379,6 +377,33 @@
                     function (errorMessage) {
                         alert(errorMessage);
                     });
+            };
+
+            $("#save_height_id_color").on("click", function () {
+                var highlightIdColor = $("#highlightIdColor").val();
+                if (highlightIdColor.length > 0 && highlightIdColor.length != 6) {
+                    alert("idColor输入格式有误，请输入六位颜色值");
+                    return;
+                }
+                setConfig("idColor", highlightIdColor, function (data) {
+                    idColor = data;
+                });
+            });
+
+            $("#save_height_text_color").on("click", function () {
+                var highlightTextColor = $("#highlightTextColor").val();
+                if (highlightTextColor.length > 0 && highlightTextColor.length != 6) {
+                    alert("textColor输入格式有误，请输入六位颜色值");
+                    return;
+                }
+                setConfig("textColor", highlightTextColor, function (data) {
+                    textColor = data;
+                });
+            });
+
+            $("#save_float_window_package_name").on("click", function () {
+                var floatWindowPackageName = $("#float_window_package_name").val();
+                setConfig("floatWindowPackageName", floatWindowPackageName);
             });
 
         });
@@ -457,7 +482,7 @@
 <!-- 设置配置弹框模块 -->
 <div class="modal fade" id="settingModalCenter" tabindex="-1" role="dialog"
      aria-labelledby="settingModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="settingModalCenterTitle">配置</h5>
@@ -467,21 +492,28 @@
                     <div class="form-group">
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text node">高亮ID</span>
-                            <input type="text" class="form-control" placeholder="默认不高亮，如需请输入六位数色值，例如: 78a4eb"
+                            <input type="text" class="form-control setting" placeholder="默认不高亮，如需请输入六位数色值，例如: 78a4eb"
                                    id="highlightIdColor">
+                            <button class="btn btn-outline-secondary" type="button" id="save_height_id_color">保存</button>
                         </div>
                         <div class="input-group input-group-sm mb-3">
                             <span class="input-group-text node">高亮Text</span>
-                            <input type="text" class="form-control" placeholder="默认不高亮，如需请输入六位数色值，例如: f33652"
+                            <input type="text" class="form-control setting" placeholder="默认不高亮，如需请输入六位数色值，例如: f33652"
                                    id="highlightTextColor">
+                            <button class="btn btn-outline-secondary" type="button" id="save_height_text_color">保存</button>
+                        </div>
+                        <div class="input-group input-group-sm mb-3">
+                            <span class="input-group-text node" style="font-size: 10px">悬浮窗包名</span>
+                            <input type="text" class="form-control setting" placeholder="如果需要获取悬浮窗的节点信息，请输入悬浮窗所属APP的包名"
+                                   id="float_window_package_name">
+                            <button class="btn btn-outline-secondary" type="button" id="save_float_window_package_name">保存</button>
                         </div>
                     </div>
                 </form>
             </div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="apply_btn">保存</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
