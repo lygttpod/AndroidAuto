@@ -2,9 +2,9 @@ package com.lygttpod.android.auto.wx.version
 
 import java.lang.reflect.Proxy
 
-var currentWXVersion = "8.0.40"
-
 val wechatVersionArray by lazy { WeChatNodesImpl.values().map { it.version }.toList() }
+
+var currentWXVersion = wechatVersionArray[0]
 
 private val wechatNodesImplMap by lazy { WeChatNodesImpl.values().associateBy { it.version } }
 
