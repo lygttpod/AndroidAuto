@@ -63,9 +63,11 @@ enum class WeChatNodesImpl(val version: String) :
 
 
         //聊天页功能区
+        override val chattingBottomRootNode = NodeInfo("", "com.tencent.mm:id/k52", "聊天页底部功能区的跟节点FrameLayout")
         override val chattingBottomPlusNode = NodeInfo("", "com.tencent.mm:id/bjz", "聊天页底部的【+】按钮")
-        override val chattingTransferMoneyNode =
-            NodeInfo("转账", "com.tencent.mm:id/a12", "聊天页底部功能区的【转账】按钮")
+        override val chattingTransferMoneyNode = NodeInfo("转账", "com.tencent.mm:id/a12", "聊天页底部功能区的【转账】按钮")
+        override val chattingSendMsgNode = NodeInfo("", "com.tencent.mm:id/bql", "聊天页底部功能区的【发送】按钮")
+        override val chattingEditTextNode = NodeInfo("", "com.tencent.mm:id/bkk", "聊天页底部功能区的【输入框】EditText")
 
 
         //转账页
@@ -170,9 +172,11 @@ enum class WeChatNodesImpl(val version: String) :
 
 
         //聊天页功能区
+        override val chattingBottomRootNode = NodeInfo("", "com.tencent.mm:id/k52", "聊天页底部功能区的跟节点FrameLayout")
         override val chattingBottomPlusNode = NodeInfo("", "com.tencent.mm:id/b3q", "聊天页底部的【+】按钮")
-        override val chattingTransferMoneyNode =
-            NodeInfo("转账", "com.tencent.mm:id/vg", "聊天页底部功能区的【转账】按钮")
+        override val chattingTransferMoneyNode = NodeInfo("转账", "com.tencent.mm:id/vg", "聊天页底部功能区的【转账】按钮")
+        override val chattingSendMsgNode = NodeInfo("", "com.tencent.mm:id/bql", "聊天页底部功能区的【发送】按钮")
+        override val chattingEditTextNode = NodeInfo("", "com.tencent.mm:id/bkk", "聊天页底部功能区的【输入框】EditText")
 
 
         //转账页
