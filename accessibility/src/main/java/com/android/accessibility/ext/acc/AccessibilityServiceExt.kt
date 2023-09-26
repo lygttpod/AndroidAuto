@@ -107,9 +107,13 @@ suspend fun AccessibilityService?.scrollToFindNextNodeByCurrentText(
             rootInActiveWindow.findNodeById(scrollViewId) ?: return null
         parent.scrollForward()
         delay(200)
+        Log.d("FindNextNodeByCurrentText", "滚动一屏后继续去查找【$lastText】的 next")
         val tryFind = getNextNodeByCurrentText(scrollViewId, childViewId, lastText, filterTexts)
         find = tryFind
         isEnd = tryFind == null
+        if (find == null && isEnd) {
+            Log.d("FindNextNodeByCurrentText", "屏幕已经滚动到底了，依然没找到，判定为查询结束")
+        }
     }
     return find
 }
@@ -123,16 +127,20 @@ private fun AccessibilityService?.getNextNodeByCurrentText(
     this ?: return null
     val parent: AccessibilityNodeInfo = rootInActiveWindow.findNodeById(scrollViewId) ?: return null
     val find =
-        parent.findNodesById(childViewId).filterNot { filterTexts.contains(it.text.default()) }
+        parent.findNodesById(childViewId).filterNot { filterTexts.contains(it.text.default().trim()) }
     return if (lastText.isNullOrBlank()) {
-        find.firstOrNull()
+        val first = find.firstOrNull()
+        Log.d("FindNextNodeByCurrentText", "没有lastText，取过滤后列表中可用的第一个【${first?.text.default()}】")
+        first
     } else {
         //注意：有的好友设置了微信状态，在通讯录列表用户名后边会显示微信状态图标
         //这个时候取到是昵称后边带空格(空格好像就是状态)，所有用contains保险一下
         //断点调试了好久才发现这个【微信状态】问题
-        val lastIndex = find.indexOfFirst { it.text.default().contains(lastText) }
+        val lastIndex = find.indexOfFirst { it.text.default().contains(lastText) && it.text.default().trim() == lastText.default().trim() }
         if (lastIndex > -1) {
-            find.getOrNull(lastIndex + 1)
+            val next = find.getOrNull(lastIndex + 1)
+            Log.d("FindNextNodeByCurrentText", "找到了上次检测的【$lastText】，取【$lastText】的 next【${next?.text.default()}】")
+            next
         } else {
             find.firstOrNull()
         }

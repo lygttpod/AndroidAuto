@@ -123,6 +123,11 @@ fun AccessibilityNodeInfo?.isTextView(): Boolean {
     return this.className.contains("TextView")
 }
 
+fun AccessibilityNodeInfo?.isEditText(): Boolean {
+    this ?: return false
+    return this.className.contains("EditText")
+}
+
 fun AccessibilityNodeInfo?.findParent(predicate: AccessibilityNodeInfo.() -> Boolean): AccessibilityNodeInfo? {
     this ?: return null
     return when {
