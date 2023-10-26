@@ -48,7 +48,7 @@ android {
 
     applicationVariants.configureEach { variant ->
         variant.outputs.configureEach {
-            outputFileName = "Android自动化_${defaultConfig.versionName}.apk"
+            outputFileName = "AndroidAuto_${defaultConfig.versionName}.apk"
         }
     }
 
