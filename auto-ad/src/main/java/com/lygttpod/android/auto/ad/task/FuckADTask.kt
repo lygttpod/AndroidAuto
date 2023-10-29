@@ -1,5 +1,6 @@
 package com.lygttpod.android.auto.ad.task
 
+import android.content.Intent
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.lifecycle.MutableLiveData
@@ -30,6 +31,9 @@ object FuckADTask {
 
     private const val APP_CONFIG = "appConfig"
     private const val FILTER_KEYWORD = "filterKeyword"
+
+    private const val ACTION_TOAST = "ACTION_TOAST"
+    private const val KEY_TOAST_TEXT = "KEY_TOAST_TEXT"
 
     private val mutex = Mutex()
 
@@ -159,6 +163,9 @@ object FuckADTask {
                 if (skipResult) {
                     withContext(Dispatchers.Main) {
                         Log.d("FuckADTask", "自动跳过【${adApp.appName}】的广告啦")
+                        AppContext.sendBroadcast(Intent(ACTION_TOAST).apply {
+                            putExtra(KEY_TOAST_TEXT, "自动跳过【${adApp.appName}】")
+                        })
                     }
                 }
                 skipResult
