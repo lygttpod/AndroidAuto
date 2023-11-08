@@ -159,7 +159,7 @@ class WxMainFragment : Fragment() {
         }
 
         binding.chAutoDeleteWhenDeleteChat.setOnCheckedChangeListener { _, isChecked ->
-            DeleteTaskHelper.enable(isChecked)
+            DeleteTaskHelper.enable(requireContext(), isChecked)
         }
 
         binding.btnFilterAll.setOnClickListener {
@@ -205,9 +205,9 @@ class WxMainFragment : Fragment() {
     private fun checkAutoDeleteWhenDeleteChatStatus(wxEnabled: Boolean) {
         binding.chAutoDeleteWhenDeleteChat.isEnabled = wxEnabled
         if (wxEnabled && binding.chAutoDeleteWhenDeleteChat.isChecked) {
-            DeleteTaskHelper.enable(true)
+            DeleteTaskHelper.enable(requireContext(), true)
         } else {
-            DeleteTaskHelper.enable(false)
+            DeleteTaskHelper.enable(requireContext(), false)
         }
     }
 }

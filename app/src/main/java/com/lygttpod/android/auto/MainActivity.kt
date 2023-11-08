@@ -50,6 +50,8 @@ class MainActivity : AppCompatActivity() {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 666)
+        } else {
+            startForegroundService(Intent(this, ForegroundService::class.java))
         }
     }
 
