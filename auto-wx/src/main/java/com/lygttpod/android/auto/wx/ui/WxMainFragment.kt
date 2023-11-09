@@ -16,6 +16,7 @@ import com.android.accessibility.ext.openAccessibilitySetting
 import com.lygttpod.android.auto.wx.R
 import com.lygttpod.android.auto.wx.adapter.FriendInfoAdapter
 import com.lygttpod.android.auto.wx.databinding.FragmentWxMainBinding
+import com.lygttpod.android.auto.wx.helper.DeleteTaskHelper
 import com.lygttpod.android.auto.wx.helper.FriendStatusHelper
 import com.lygttpod.android.auto.wx.helper.HBTaskHelper
 import com.lygttpod.android.auto.wx.helper.TaskByGroupHelper
@@ -78,11 +79,13 @@ class WxMainFragment : Fragment() {
     private fun initObserver() {
         accServiceLiveData.observe(viewLifecycleOwner) { open ->
             binding.chAutoHb.isEnabled = open
+            checkAutoDeleteWhenDeleteChatStatus(open)
             binding.btnGetFriendList.isEnabled = open
             binding.btnCheck.isEnabled = open
             binding.btnCheckByGroup.isEnabled = open
 
-            binding.btnOpenService.text = if (open) "【微信自动化】服务已开启" else "打开【微信自动化】服务"
+            binding.btnOpenService.text =
+                if (open) "【微信自动化】服务已开启" else "打开【微信自动化】服务"
 
         }
 
@@ -155,6 +158,10 @@ class WxMainFragment : Fragment() {
             HBTaskHelper.autoFuckMoney(isChecked)
         }
 
+        binding.chAutoDeleteWhenDeleteChat.setOnCheckedChangeListener { _, isChecked ->
+            DeleteTaskHelper.enable(requireContext(), isChecked)
+        }
+
         binding.btnFilterAll.setOnClickListener {
             adapter.setData(FriendStatusHelper.filterAllData())
         }
@@ -193,5 +200,14 @@ class WxMainFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun checkAutoDeleteWhenDeleteChatStatus(wxEnabled: Boolean) {
+        binding.chAutoDeleteWhenDeleteChat.isEnabled = wxEnabled
+        if (wxEnabled && binding.chAutoDeleteWhenDeleteChat.isChecked) {
+            DeleteTaskHelper.enable(requireContext(), true)
+        } else {
+            DeleteTaskHelper.enable(requireContext(), false)
+        }
     }
 }

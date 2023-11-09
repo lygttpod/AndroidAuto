@@ -1,8 +1,12 @@
 package com.lygttpod.android.auto
 
 import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -43,6 +47,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 666)
+        } else {
+            startForegroundService(Intent(this, ForegroundService::class.java))
+        }
     }
 
     override fun onResume() {
@@ -53,5 +63,17 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 666 && grantResults.getOrNull(0)
+            == PackageManager.PERMISSION_GRANTED) {
+            startForegroundService(Intent(this, ForegroundService::class.java))
+        }
     }
 }

@@ -48,6 +48,15 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/btn_open_service" />
 
+    <CheckBox
+        android:id="@+id/ch_auto_delete_when_delete_chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="删除聊天时自动点击删除"
+        app:layout_constraintTop_toBottomOf="@id/ch_auto_hb"
+        app:layout_constraintRight_toRightOf="@id/ch_auto_hb" />
+
     <Button
         android:id="@+id/btn_get_friend_list"
         android:layout_width="0dp"
@@ -55,7 +64,7 @@
         android:text="获取微信好友列表"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_open_service" />
+        app:layout_constraintTop_toBottomOf="@id/ch_auto_delete_when_delete_chat" />
 
     <Button
         android:id="@+id/btn_check"

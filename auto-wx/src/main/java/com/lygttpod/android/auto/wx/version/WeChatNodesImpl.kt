@@ -1,9 +1,11 @@
 package com.lygttpod.android.auto.wx.version
 
 import com.lygttpod.android.auto.wx.data.NodeInfo
+import com.lygttpod.android.auto.wx.helper.DeleteTaskHelper
 import com.lygttpod.android.auto.wx.page.WXChattingPage
 import com.lygttpod.android.auto.wx.page.WXContactInfoPage
 import com.lygttpod.android.auto.wx.page.WXContactPage
+import com.lygttpod.android.auto.wx.page.WXDeleteDialogPage
 import com.lygttpod.android.auto.wx.page.WXHBPage
 import com.lygttpod.android.auto.wx.page.WXHomePage
 import com.lygttpod.android.auto.wx.page.WXMinePage
@@ -22,11 +24,12 @@ enum class WeChatNodesImpl(val version: String) :
     WXChattingPage.Nodes,
     WXRemittancePage.Nodes,
     WXHBPage.Nodes,
+    WXDeleteDialogPage.Nodes,
     WXCreateGroupPage.Nodes,
     WXGroupChatPage.Nodes,
     WXGroupInfoPage.Nodes,
     WXGroupManagerPage.Nodes {
-    
+
     WechatVersion_8_0_42("8.0.42") { // 8.0.42版本和8.0.41版本元素没变化
         //首页
         override val homeBottomNavNode = NodeInfo("", "com.tencent.mm:id/huj", "首页底导布局")
@@ -96,6 +99,12 @@ enum class WeChatNodesImpl(val version: String) :
         override val hbNumNode = NodeInfo("", "com.tencent.mm:id/iyw", "红包详情页中抢到的红包金额")
         override val hbMissNode = NodeInfo("看看大家的手气", "com.tencent.mm:id/j6d", "被抢完的红包弹框")
         override val hbMissCloseNode = NodeInfo("", "com.tencent.mm:id/j6f", "关闭被抢完的红包弹框")
+
+
+        // TODO: 2023/10/31 未适配
+        //删除聊天记录弹窗
+        override val dialogContentNode = NodeInfo("删除后，将清空该聊天的消息记录", "com.tencent.mm:id/guo", "删除聊天记录弹窗中内容")
+        override val dialogDeleteNode = NodeInfo("删除", "com.tencent.mm:id/guw", "删除聊天记录弹窗中【删除】按钮")
 
 
         //群聊发起页
@@ -207,6 +216,12 @@ enum class WeChatNodesImpl(val version: String) :
         override val hbMissCloseNode = NodeInfo("", "com.tencent.mm:id/j6f", "关闭被抢完的红包弹框")
 
 
+        // TODO: 2023/10/31 未适配 
+        //删除聊天记录弹窗
+        override val dialogContentNode = NodeInfo("删除后，将清空该聊天的消息记录", "com.tencent.mm:id/guo", "删除聊天记录弹窗中内容")
+        override val dialogDeleteNode = NodeInfo("删除", "com.tencent.mm:id/guw", "删除聊天记录弹窗中【删除】按钮")
+
+
         //群聊发起页
         override val createGroupPageTitleNode = NodeInfo("发起群聊", "android:id/text1", "发起群聊页面")
         override val createGroupUserListNode =
@@ -314,6 +329,11 @@ enum class WeChatNodesImpl(val version: String) :
         override val hbNumNode = NodeInfo("", "com.tencent.mm:id/gcj", "红包详情页中抢到的红包金额")
         override val hbMissNode = NodeInfo("看看大家的手气", "com.tencent.mm:id/gin", "被抢完的红包弹框")
         override val hbMissCloseNode = NodeInfo("", "com.tencent.mm:id/gip", "关闭被抢完的红包弹框")
+
+
+        //删除聊天记录弹窗
+        override val dialogContentNode = NodeInfo("删除后，将清空该聊天的消息记录", "com.tencent.mm:id/guo", "删除聊天记录弹窗中内容")
+        override val dialogDeleteNode = NodeInfo("删除", "com.tencent.mm:id/guw", "删除聊天记录弹窗中【删除】按钮")
 
 
         //群聊发起页
