@@ -101,6 +101,7 @@ object FuckADTask {
                             fuckAdApps!!.fuckAd.apps.find { it.packageName == newData.packageName }
                         if (oldData != null) {
                             newData.adNode = oldData.adNode
+                            newData.enableCheck = oldData.enableCheck
                         }
                     }
                     fuckAdApps = it
@@ -120,7 +121,7 @@ object FuckADTask {
     fun fuckAD(event: AccessibilityEvent) {
         if (mutex.isLocked) return
         val packageName = event.packageName.default()
-        fuckAdApps?.fuckAd?.apps?.find { it.packageName == packageName }?.let {
+        fuckAdApps?.fuckAd?.apps?.find { it.packageName == packageName && it.enableCheck }?.let {
             Log.d("FuckADTask", "打开了【${it.appName}】的【${it.launcher}】")
             if (it.isSkipped()) return@let
             fuckADTaskScope.launch {

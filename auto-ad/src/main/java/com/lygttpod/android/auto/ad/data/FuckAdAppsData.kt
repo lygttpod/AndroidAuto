@@ -16,6 +16,7 @@ data class AdApp(
     val packageName: String,
     val launcher: String,
     var lastSkipSuccessTime: Long = 0,
+    var enableCheck: Boolean = true,//是否允许检测,默认允许
     var adNode: ADNode = ADNode()
 ) : Parcelable {
     fun skipSuccess() {

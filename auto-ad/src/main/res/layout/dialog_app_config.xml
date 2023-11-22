@@ -5,14 +5,24 @@
     android:layout_height="match_parent"
     android:padding="15dp">
 
+    <CheckBox
+        android:id="@+id/enable_check"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="默认允许检测广告，如若不想检测它，关掉即可"
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_action_des"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:text="1、碰到无法自动跳过广告时可以设置新的action进行适配（一般无需修改）"
         android:textSize="12sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/enable_check" />
 
     <TextView
         android:id="@+id/tv_action"

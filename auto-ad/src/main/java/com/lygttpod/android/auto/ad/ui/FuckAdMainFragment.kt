@@ -54,6 +54,10 @@ class FuckAdMainFragment : Fragment() {
         appConfigAdapter.onItemClick = { adApp ->
             val view = layoutInflater.inflate(R.layout.dialog_app_config, null)
             val binding = DialogAppConfigBinding.bind(view)
+            binding.enableCheck.isChecked = adApp.enableCheck
+            binding.enableCheck.setOnCheckedChangeListener { buttonView, isChecked ->
+                adApp.enableCheck = isChecked
+            }
             binding.etNodeAction.setText(adApp.adNode.action)
             binding.etNodeActionMaxLength.setText("${adApp.getMaxLength()}")
             binding.etNodeId.setText(adApp.getNodeId())
