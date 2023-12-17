@@ -1,5 +1,6 @@
 package com.lygttpod.android.auto.wx.page
 
+import android.util.Log
 import com.android.accessibility.ext.acc.*
 import com.android.accessibility.ext.task.retryCheckTaskWithLog
 import com.lygttpod.android.auto.wx.data.NodeInfo
@@ -70,17 +71,22 @@ object WXHomePage : IPage {
     suspend fun clickContactsTab(doubleClick: Boolean = false): Boolean {
         return delayAction {
             retryCheckTaskWithLog("点击【通讯录】tab") {
+                val tabNode = wxAccessibilityService?.findByIdAndText(Nodes.bottomNavContactsTabNode.nodeId, Nodes.bottomNavContactsTabNode.nodeText)
                 if (doubleClick) {
-                    wxAccessibilityService?.findByIdAndText(
-                        Nodes.bottomNavContactsTabNode.nodeId,
-                        Nodes.bottomNavContactsTabNode.nodeText
-                    ).click()
+                    Log.d("clickContactsTab", "双击 通讯录 tab 第一次")
+                    tabNode.click()
                     delay(300)
+                    Log.d("clickContactsTab", "双击 通讯录 tab 第二次")
+                    tabNode.click()
+                } else {
+                    if (tabNode?.isSelected == true) {
+                        Log.d("clickContactsTab", "已经在 通讯录 页面了  无需再点击")
+                        true
+                    } else {
+                        Log.d("clickContactsTab", "单击 通讯录 tab")
+                        tabNode.click()
+                    }
                 }
-                wxAccessibilityService?.findByIdAndText(
-                    Nodes.bottomNavContactsTabNode.nodeId,
-                    Nodes.bottomNavContactsTabNode.nodeText
-                ).click()
             }
         }
     }
